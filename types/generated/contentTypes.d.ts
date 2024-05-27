@@ -362,6 +362,38 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiMotivadorMotivador extends Schema.CollectionType {
+  collectionName: 'motivadors';
+  info: {
+    singularName: 'motivador';
+    pluralName: 'motivadors';
+    displayName: 'Motivador';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Titulo: Attribute.String & Attribute.Required;
+    Descripcion: Attribute.Blocks;
+    Banner: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiServicioServicio extends Schema.CollectionType {
   collectionName: 'servicios';
   info: {
@@ -837,6 +869,7 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::motivador.motivador': ApiMotivadorMotivador;
       'api::servicio.servicio': ApiServicioServicio;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
