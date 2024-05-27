@@ -38,6 +38,12 @@
       "relation": "manyToOne",
       "target": "api::motivador.motivador",
       "inversedBy": "servicios"
+    },
+    "empresa": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::empresa.empresa",
+      "inversedBy": "servicios"
     }
   }
 }
