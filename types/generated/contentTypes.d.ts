@@ -368,6 +368,7 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
     singularName: 'motivador';
     pluralName: 'motivadors';
     displayName: 'Motivador';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -376,6 +377,11 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
     Titulo: Attribute.String & Attribute.Required;
     Descripcion: Attribute.Blocks;
     Banner: Attribute.Media;
+    servicios: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToMany',
+      'api::servicio.servicio'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -415,6 +421,11 @@ export interface ApiServicioServicio extends Schema.CollectionType {
     Descripcion_Ampliada: Attribute.Blocks;
     Bullets: Attribute.String;
     Banner: Attribute.Media;
+    motivador: Attribute.Relation<
+      'api::servicio.servicio',
+      'manyToOne',
+      'api::motivador.motivador'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "motivador",
     "pluralName": "motivadors",
-    "displayName": "Motivador"
+    "displayName": "Motivador",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -19,11 +20,18 @@
       "type": "blocks"
     },
     "Banner": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": true
+      ]
+    },
+    "servicios": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::servicio.servicio",
+      "mappedBy": "motivador"
     }
   }
 }
