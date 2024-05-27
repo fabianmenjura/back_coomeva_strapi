@@ -28,7 +28,7 @@ const config = {
     // 'zh',
   ],
   //EN caso de querer personalizar la traducción
-      // translations: {
+    //   translations: {
     //   es: {
     //     "Analytics": "Analytics",
     //     "Auth.components.Oops.text": "Tu cuenta ha sido suspendida",
