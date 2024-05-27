@@ -362,88 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiMotivadorMotivador extends Schema.CollectionType {
-  collectionName: 'motivadors';
-  info: {
-    singularName: 'motivador';
-    pluralName: 'motivadors';
-    displayName: 'Motivador';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Titulo: Attribute.String & Attribute.Required;
-    Descripcion: Attribute.Blocks;
-    Banner: Attribute.Media;
-    servicios: Attribute.Relation<
-      'api::motivador.motivador',
-      'oneToMany',
-      'api::servicio.servicio'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::motivador.motivador',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::motivador.motivador',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiServicioServicio extends Schema.CollectionType {
-  collectionName: 'servicios';
-  info: {
-    singularName: 'servicio';
-    pluralName: 'servicios';
-    displayName: 'Servicio';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Titulo: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        minLength: 3;
-      }>;
-    Descripcion_Corta: Attribute.Text;
-    Descripcion_Ampliada: Attribute.Blocks;
-    Bullets: Attribute.String;
-    Banner: Attribute.Media;
-    motivador: Attribute.Relation<
-      'api::servicio.servicio',
-      'manyToOne',
-      'api::motivador.motivador'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::servicio.servicio',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::servicio.servicio',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -870,6 +788,129 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface ApiMotivadorMotivador extends Schema.CollectionType {
+  collectionName: 'motivadors';
+  info: {
+    singularName: 'motivador';
+    pluralName: 'motivadors';
+    displayName: 'Motivador';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Titulo: Attribute.String & Attribute.Required;
+    Descripcion: Attribute.Blocks;
+    Banner: Attribute.Media;
+    servicios: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToMany',
+      'api::servicio.servicio'
+    >;
+    publico_objetivo: Attribute.Relation<
+      'api::motivador.motivador',
+      'manyToOne',
+      'api::publico-objetivo.publico-objetivo'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPublicoObjetivoPublicoObjetivo
+  extends Schema.CollectionType {
+  collectionName: 'publico_objetivos';
+  info: {
+    singularName: 'publico-objetivo';
+    pluralName: 'publico-objetivos';
+    displayName: 'PublicoObjetivo';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Nombre: Attribute.String;
+    motivadors: Attribute.Relation<
+      'api::publico-objetivo.publico-objetivo',
+      'oneToMany',
+      'api::motivador.motivador'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::publico-objetivo.publico-objetivo',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::publico-objetivo.publico-objetivo',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiServicioServicio extends Schema.CollectionType {
+  collectionName: 'servicios';
+  info: {
+    singularName: 'servicio';
+    pluralName: 'servicios';
+    displayName: 'Servicio';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Titulo: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 3;
+      }>;
+    Descripcion_Corta: Attribute.Text;
+    Descripcion_Ampliada: Attribute.Blocks;
+    Bullets: Attribute.String;
+    Banner: Attribute.Media;
+    motivador: Attribute.Relation<
+      'api::servicio.servicio',
+      'manyToOne',
+      'api::motivador.motivador'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::servicio.servicio',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::servicio.servicio',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -880,8 +921,6 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::motivador.motivador': ApiMotivadorMotivador;
-      'api::servicio.servicio': ApiServicioServicio;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -890,6 +929,9 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
+      'api::motivador.motivador': ApiMotivadorMotivador;
+      'api::publico-objetivo.publico-objetivo': ApiPublicoObjetivoPublicoObjetivo;
+      'api::servicio.servicio': ApiServicioServicio;
     }
   }
 }
