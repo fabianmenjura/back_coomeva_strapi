@@ -32,12 +32,6 @@
       "relation": "oneToMany",
       "target": "api::servicio.servicio",
       "mappedBy": "motivador"
-    },
-    "publico_objetivo": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::publico-objetivo.publico-objetivo",
-      "inversedBy": "motivadors"
     }
   }
 }
