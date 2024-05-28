@@ -4,7 +4,8 @@
   "info": {
     "singularName": "publico-objetivo",
     "pluralName": "publico-objetivos",
-    "displayName": "PublicoObjetivo"
+    "displayName": "PublicoObjetivo",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -19,6 +20,10 @@
       "relation": "oneToMany",
       "target": "api::motivador.motivador",
       "mappedBy": "publico_objetivo"
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Nombre"
     }
   }
 }

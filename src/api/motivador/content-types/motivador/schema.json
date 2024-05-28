@@ -38,6 +38,11 @@
       "relation": "manyToOne",
       "target": "api::publico-objetivo.publico-objetivo",
       "inversedBy": "motivadors"
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Titulo",
+      "required": true
     }
   }
 }

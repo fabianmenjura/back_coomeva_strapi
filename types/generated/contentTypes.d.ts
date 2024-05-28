@@ -813,6 +813,8 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
       'manyToOne',
       'api::publico-objetivo.publico-objetivo'
     >;
+    Slug: Attribute.UID<'api::motivador.motivador', 'Titulo'> &
+      Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -838,6 +840,7 @@ export interface ApiPublicoObjetivoPublicoObjetivo
     singularName: 'publico-objetivo';
     pluralName: 'publico-objetivos';
     displayName: 'PublicoObjetivo';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -849,6 +852,7 @@ export interface ApiPublicoObjetivoPublicoObjetivo
       'oneToMany',
       'api::motivador.motivador'
     >;
+    Slug: Attribute.UID<'api::publico-objetivo.publico-objetivo', 'Nombre'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -893,6 +897,7 @@ export interface ApiServicioServicio extends Schema.CollectionType {
       'manyToOne',
       'api::motivador.motivador'
     >;
+    Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -27,17 +27,22 @@
       "type": "string"
     },
     "Banner": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": true
+      ]
     },
     "motivador": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::motivador.motivador",
       "inversedBy": "servicios"
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Titulo"
     }
   }
 }

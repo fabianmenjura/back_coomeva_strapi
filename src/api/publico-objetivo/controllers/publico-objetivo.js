@@ -33,6 +33,7 @@ module.exports = createCoreController('api::publico-objetivo.publico-objetivo', 
               id: motivador.id,  // ID del motivador
               attributes: {
                 Titulo: motivador.Titulo,  // Título del motivador
+                Slug: motivador.Slug,  // Slug del motivador
                 Descripcion: motivador.Descripcion,  // Descripción del motivador
                 createdAt: motivador.createdAt,  // Fecha de creación del motivador
                 updatedAt: motivador.updatedAt,  // Fecha de actualización del motivador
