@@ -801,20 +801,16 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
   };
   attributes: {
     Titulo: Attribute.String & Attribute.Required;
-    Descripcion: Attribute.Blocks;
+    Descripcion: Attribute.Blocks & Attribute.Required;
     Banner: Attribute.Media;
     servicios: Attribute.Relation<
       'api::motivador.motivador',
       'oneToMany',
       'api::servicio.servicio'
     >;
-    publico_objetivo: Attribute.Relation<
-      'api::motivador.motivador',
-      'manyToOne',
-      'api::publico-objetivo.publico-objetivo'
-    >;
     Slug: Attribute.UID<'api::motivador.motivador', 'Titulo'> &
       Attribute.Required;
+    Publico_Objetivo: Attribute.Component<'a.publico'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -833,37 +829,39 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
   };
 }
 
-export interface ApiPublicoObjetivoPublicoObjetivo
-  extends Schema.CollectionType {
-  collectionName: 'publico_objetivos';
+export interface ApiPresentacionPresentacion extends Schema.CollectionType {
+  collectionName: 'presentacions';
   info: {
-    singularName: 'publico-objetivo';
-    pluralName: 'publico-objetivos';
-    displayName: 'PublicoObjetivo';
+    singularName: 'presentacion';
+    pluralName: 'presentacions';
+    displayName: 'Presentacion';
     description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    Nombre: Attribute.String;
-    motivadors: Attribute.Relation<
-      'api::publico-objetivo.publico-objetivo',
+    Empresa: Attribute.String & Attribute.Required;
+    NIT: Attribute.String & Attribute.Required;
+    Contacto: Attribute.String & Attribute.Required;
+    Cargo: Attribute.String;
+    Celular: Attribute.BigInteger;
+    Correo: Attribute.Email & Attribute.Required;
+    servicios: Attribute.Relation<
+      'api::presentacion.presentacion',
       'oneToMany',
-      'api::motivador.motivador'
+      'api::servicio.servicio'
     >;
-    Slug: Attribute.UID<'api::publico-objetivo.publico-objetivo', 'Nombre'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::publico-objetivo.publico-objetivo',
+      'api::presentacion.presentacion',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::publico-objetivo.publico-objetivo',
+      'api::presentacion.presentacion',
       'oneToOne',
       'admin::user'
     > &
@@ -892,11 +890,6 @@ export interface ApiServicioServicio extends Schema.CollectionType {
     Descripcion_Ampliada: Attribute.Blocks;
     Bullets: Attribute.String;
     Banner: Attribute.Media;
-    motivador: Attribute.Relation<
-      'api::servicio.servicio',
-      'manyToOne',
-      'api::motivador.motivador'
-    >;
     Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -935,7 +928,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
       'api::motivador.motivador': ApiMotivadorMotivador;
-      'api::publico-objetivo.publico-objetivo': ApiPublicoObjetivoPublicoObjetivo;
+      'api::presentacion.presentacion': ApiPresentacionPresentacion;
       'api::servicio.servicio': ApiServicioServicio;
     }
   }

@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_a_publicos",
+  "info": {
+    "displayName": "Publico"
+  },
+  "options": {},
+  "attributes": {
+    "Colaborador": {
+      "type": "boolean"
+    },
+    "Empresa": {
+      "type": "boolean"
+    }
+  }
+}

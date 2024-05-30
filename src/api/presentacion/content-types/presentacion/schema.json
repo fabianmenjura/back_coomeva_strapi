@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "presentacions",
+  "info": {
+    "singularName": "presentacion",
+    "pluralName": "presentacions",
+    "displayName": "Presentacion",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Empresa": {
+      "type": "string",
+      "required": true
+    },
+    "NIT": {
+      "type": "string",
+      "required": true
+    },
+    "Contacto": {
+      "type": "string",
+      "required": true
+    },
+    "Cargo": {
+      "type": "string",
+      "required": false
+    },
+    "Celular": {
+      "type": "biginteger"
+    },
+    "Correo": {
+      "type": "email",
+      "required": true
+    },
+    "servicios": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::servicio.servicio"
+    }
+  }
+}

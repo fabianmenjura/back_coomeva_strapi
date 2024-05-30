@@ -17,7 +17,8 @@
       "required": true
     },
     "Descripcion": {
-      "type": "blocks"
+      "type": "blocks",
+      "required": true
     },
     "Banner": {
       "type": "media",
@@ -30,19 +31,18 @@
     "servicios": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::servicio.servicio",
-      "mappedBy": "motivador"
-    },
-    "publico_objetivo": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::publico-objetivo.publico-objetivo",
-      "inversedBy": "motivadors"
+      "target": "api::servicio.servicio"
     },
     "Slug": {
       "type": "uid",
       "targetField": "Titulo",
       "required": true
+    },
+    "Publico_Objetivo": {
+      "displayName": "Publico",
+      "type": "component",
+      "repeatable": false,
+      "component": "a.publico"
     }
   }
 }
