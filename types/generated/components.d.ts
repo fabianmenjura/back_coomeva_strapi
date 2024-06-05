@@ -4,10 +4,11 @@ export interface APublico extends Schema.Component {
   collectionName: 'components_a_publicos';
   info: {
     displayName: 'Publico';
+    description: '';
   };
   attributes: {
-    Colaborador: Attribute.Boolean;
-    Empresa: Attribute.Boolean;
+    Colaborador: Attribute.Boolean & Attribute.Required;
+    Empresa: Attribute.Boolean & Attribute.Required;
   };
 }
 

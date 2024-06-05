@@ -39,6 +39,11 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::servicio.servicio"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

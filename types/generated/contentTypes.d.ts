@@ -695,7 +695,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -723,6 +722,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'plugin::users-permissions.user',
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -851,6 +855,11 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
       'api::presentacion.presentacion',
       'oneToMany',
       'api::servicio.servicio'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
