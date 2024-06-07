@@ -14,7 +14,7 @@ module.exports = createCoreController('api::presentacion.presentacion', ({ strap
 
     // Filtrar presentaciones por el ID del usuario autenticado
     const entities = await strapi.db.query('api::presentacion.presentacion').findMany({
-      where: { created_by_id: user.id },
+      where: { id_own_user: user.id },
     });
 
     // Sanitizar las entidades antes de devolverlas
@@ -87,11 +87,14 @@ module.exports = createCoreController('api::presentacion.presentacion', ({ strap
       return ctx.unauthorized('User not authenticated');
     }
 
+    ctx.request.body.data.id_own_user = user.id;
+    
+
     // Añadir el usuario autenticado como creador de la presentación
-    ctx.request.body.data = {
-      ...ctx.request.body.data,
-      created_by_id: user.id,  // Usar solo el ID del usuario
-    };
+    // ctx.request.body.data = {
+    //   ...ctx.request.body.data,
+    //   created_by_id: user.id,  // Usar solo el ID del usuario
+    // };
 
     // Llamar a la función `create` del controlador base
     const response = await super.create(ctx);

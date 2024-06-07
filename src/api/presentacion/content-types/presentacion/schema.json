@@ -40,10 +40,9 @@
       "relation": "oneToMany",
       "target": "api::servicio.servicio"
     },
-    "users_permissions_user": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
+    "id_own_user": {
+      "type": "biginteger",
+      "required": true
     }
   }
 }
