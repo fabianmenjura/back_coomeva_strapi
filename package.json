@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@strapi/plugin-cloud": "4.24.3",
+    "@strapi/plugin-color-picker": "^4.25.2",
     "@strapi/plugin-i18n": "4.24.3",
     "@strapi/plugin-users-permissions": "4.24.3",
     "@strapi/strapi": "4.24.3",

@@ -1,134 +1,140 @@
-'use strict';
+"use strict";
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const { createCoreController } = require("@strapi/strapi").factories;
 
-module.exports = createCoreController('api::presentacion.presentacion', ({ strapi }) => ({
+module.exports = createCoreController(
+  "api::presentacion.presentacion",
+  ({ strapi }) => ({
+    //METODO GET, LISTAR PRESENTACIONES
+    async findUserPresentations(ctx) {
+      const user = ctx.state.user; // Obtener el usuario autenticado
 
- //METODO GET, LISTAR PRESENTACIONES
-async findUserPresentations(ctx) {
-  const user = ctx.state.user;  // Obtener el usuario autenticado
-
-  if (!user) {
-    return ctx.unauthorized('User not authenticated');
-  }
-
-  // Filtrar presentaciones por el ID del usuario autenticado y poblar los servicios asociados y sus banners
-  const entities = await strapi.db.query('api::presentacion.presentacion').findMany({
-    where: { id_own_user: user.id },
-    populate: {
-      servicios: {
-        populate: {
-          Banner: true  // Ajusta 'Banner' al nombre del campo de relación correspondiente
-        }
+      if (!user) {
+        return ctx.unauthorized("User not authenticated");
       }
-    }
-  });
 
-  // Sanitizar las entidades antes de devolverlas
-  const sanitizedEntities = await this.sanitizeOutput(entities, ctx);
+      // Filtrar presentaciones por el ID del usuario autenticado y poblar los servicios asociados y sus banners
+      const entities = await strapi.db
+        .query("api::presentacion.presentacion")
+        .findMany({
+          where: { id_own_user: user.id },
+          populate: {
+            servicios: {
+              populate: {
+                Banner: true,
+              },
+            },
+          },
+        });
 
-  // Transformar la respuesta para que cumpla con la estructura deseada
-  const transformedResponse = {
-    data: sanitizedEntities.map(presentacion => ({
-      id: presentacion.id,
-      attributes: {
-        ...presentacion,
-        servicios: {
-          data: presentacion.servicios.map(servicio => ({
-            id: servicio.id,
-            attributes: {
-              ...servicio,
-              Banner: {
-                data: servicio.Banner ? [servicio.Banner] : null
-              }
-            }
-          }))
-        }
+      // Sanitizar las entidades antes de devolverlas
+      const sanitizedEntities = await this.sanitizeOutput(entities, ctx);
+
+      // Transformar la respuesta para que cumpla con la estructura deseada
+      const transformedResponse = {
+        data: sanitizedEntities.map((presentacion) => ({
+          id: presentacion.id,
+          attributes: {
+            ...presentacion,
+            servicios: {
+              data: presentacion.servicios.map((servicio) => ({
+                id: servicio.id,
+                attributes: {
+                  ...servicio,
+                  Banner: {
+                    data: servicio.Banner ? [servicio.Banner] : null,
+                  },
+                },
+              })),
+            },
+          },
+        })),
+        meta: {},
+      };
+
+      return this.transformResponse(transformedResponse);
+    },
+
+    async updateUserPresentation(ctx) {
+      const user = ctx.state.user; // Obtener el usuario autenticado
+
+      if (!user) {
+        return ctx.unauthorized("User not authenticated");
       }
-    })),
-    meta: {}
-  };
 
-  return this.transformResponse(transformedResponse);
-},
+      const { id } = ctx.params;
 
+      // Verificar que la presentación que se está actualizando pertenece al usuario autenticado
+      const existingEntity = await strapi.db
+        .query("api::presentacion.presentacion")
+        .findOne({
+          where: { id, created_by_id: user.id },
+        });
 
-  async updateUserPresentation(ctx) {
-    const user = ctx.state.user;  // Obtener el usuario autenticado
+      if (!existingEntity) {
+        return ctx.unauthorized("You can only update your own presentations");
+      }
 
-    if (!user) {
-      return ctx.unauthorized('User not authenticated');
-    }
+      // Asegurarse de que el campo created_by_id no cambie
+      ctx.request.body.data = {
+        ...ctx.request.body.data,
+        created_by_id: existingEntity.created_by_id, // Mantener el ID del creador original
+      };
 
-    const { id } = ctx.params;
+      // Llamar a la función `update` del controlador base
+      const response = await super.update(ctx);
 
-    // Verificar que la presentación que se está actualizando pertenece al usuario autenticado
-    const existingEntity = await strapi.db.query('api::presentacion.presentacion').findOne({
-      where: { id, created_by_id: user.id },
-    });
+      return response;
+    },
 
-    if (!existingEntity) {
-      return ctx.unauthorized('You can only update your own presentations');
-    }
+    //=========================
+    //ELIMINAR
+    async deleteUserPresentation(ctx) {
+      const user = ctx.state.user; // Obtener el usuario autenticado
 
-    // Asegurarse de que el campo created_by_id no cambie
-    ctx.request.body.data = {
-      ...ctx.request.body.data,
-      created_by_id: existingEntity.created_by_id,  // Mantener el ID del creador original
-    };
+      if (!user) {
+        return ctx.unauthorized("User not authenticated");
+      }
 
-    // Llamar a la función `update` del controlador base
-    const response = await super.update(ctx);
+      const { id } = ctx.params;
 
-    return response;
-  },
+      // Verificar que la presentación que se está eliminando pertenece al usuario autenticado
+      const existingEntity = await strapi.db
+        .query("api::presentacion.presentacion")
+        .findOne({
+          where: { id, created_by_id: user.id },
+        });
 
-  //=========================
-  //ELIMINAR
-  async deleteUserPresentation(ctx) {
-    const user = ctx.state.user;  // Obtener el usuario autenticado
+      if (!existingEntity) {
+        return ctx.unauthorized("You can only delete your own presentations");
+      }
 
-    if (!user) {
-      return ctx.unauthorized('User not authenticated');
-    }
+      // Llamar a la función `delete` del controlador base
+      const response = await super.delete(ctx);
 
-    const { id } = ctx.params;
+      return response;
+    },
 
-    // Verificar que la presentación que se está eliminando pertenece al usuario autenticado
-    const existingEntity = await strapi.db.query('api::presentacion.presentacion').findOne({
-      where: { id, created_by_id: user.id },
-    });
+    //Crear presentaciones
+    async createUserPresentation(ctx) {
+      const user = ctx.state.user; // Obtener el usuario autenticado
 
-    if (!existingEntity) {
-      return ctx.unauthorized('You can only delete your own presentations');
-    }
+      if (!user) {
+        return ctx.unauthorized("User not authenticated");
+      }
 
-    // Llamar a la función `delete` del controlador base
-    const response = await super.delete(ctx);
+      ctx.request.body.data.id_own_user = user.id;
 
-    return response;
-  },
+      // Añadir el usuario autenticado como creador de la presentación
+      // ctx.request.body.data = {
+      //   ...ctx.request.body.data,
+      //   created_by_id: user.id,  // Usar solo el ID del usuario
+      // };
 
-  //Crear presentaciones
-  async createUserPresentation(ctx) {
-    const user = ctx.state.user;  // Obtener el usuario autenticado
+      // Llamar a la función `create` del controlador base
+      const response = await super.create(ctx);
 
-    if (!user) {
-      return ctx.unauthorized('User not authenticated');
-    }
-
-    ctx.request.body.data.id_own_user = user.id;
-    
-
-    // Añadir el usuario autenticado como creador de la presentación
-    // ctx.request.body.data = {
-    //   ...ctx.request.body.data,
-    //   created_by_id: user.id,  // Usar solo el ID del usuario
-    // };
-
-    // Llamar a la función `create` del controlador base
-    const response = await super.create(ctx);
-
-    return response;
-  },
-}));
+      return response;
+    },
+  })
+);

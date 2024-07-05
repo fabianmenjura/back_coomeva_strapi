@@ -426,6 +426,8 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
     >;
     id_own_user: Attribute.BigInteger;
     Nombre_Responsable: Attribute.String & Attribute.Required;
+    Color: Attribute.String &
+      Attribute.CustomField<'plugin::color-picker.color'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
