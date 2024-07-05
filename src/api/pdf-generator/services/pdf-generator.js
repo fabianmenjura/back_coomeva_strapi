@@ -38,7 +38,7 @@ module.exports = {
     const htmlContent = ejs.render(htmlTemplate, { data, logoUrl, fondoUrl, fontPath });
 
     const options = { format: 'A4'};
-    const filePath = path.join(__dirname, '../../../../public/uploads', 'output.pdf');
+    const filePath = path.join(__dirname, '../../../../public/uploads/pdf', 'output.pdf');
 
     return new Promise((resolve, reject) => {
       htmlPdf.create(htmlContent, options).toFile(filePath, (err, res) => {

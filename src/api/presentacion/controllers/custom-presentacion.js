@@ -1,5 +1,5 @@
 "use strict";
-
+const axios = require("axios");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController(
@@ -175,18 +175,18 @@ module.exports = createCoreController(
     //Crear presentaciones
     async createUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
+      const pdfResponse = await axios.get(
+        "http://localhost:1337/api/pdf-generator/download-pdf"
+      );
+      const server = "http://localhost:1337"; //editar en produccion
+      const downloadPDFUrl = server + pdfResponse.data.url;
 
       if (!user) {
         return ctx.unauthorized("Usuario no autenticado");
       }
-
+      // Añadir el usuario autenticado como dueño de la presentación
       ctx.request.body.data.id_own_user = user.id;
-
-      // Añadir el usuario autenticado como creador de la presentación
-      // ctx.request.body.data = {
-      //   ...ctx.request.body.data,
-      //   created_by_id: user.id,  // Usar solo el ID del usuario
-      // };
+      ctx.request.body.data.DownloadPDF = downloadPDFUrl;
 
       // Llamar a la función `create` del controlador base
       const response = await super.create(ctx);

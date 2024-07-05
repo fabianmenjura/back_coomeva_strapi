@@ -39,6 +39,9 @@
     "Nombre_Responsable": {
       "type": "string",
       "required": true
+    },
+    "DownloadPDF": {
+      "type": "string"
     }
   }
 }

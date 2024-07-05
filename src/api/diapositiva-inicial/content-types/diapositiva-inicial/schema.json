@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "diapositiva_inicials",
+  "info": {
+    "singularName": "diapositiva-inicial",
+    "pluralName": "diapositiva-inicials",
+    "displayName": "DiapositivaInicial",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titulo": {
+      "type": "string"
+    },
+    "Logo": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Fondo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Descripcion": {
+      "type": "blocks"
+    }
+  }
+}
