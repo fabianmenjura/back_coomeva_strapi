@@ -16,14 +16,6 @@
       "type": "string",
       "required": true
     },
-    "NIT": {
-      "type": "string",
-      "required": true
-    },
-    "Contacto": {
-      "type": "string",
-      "required": true
-    },
     "Cargo": {
       "type": "string",
       "required": false
@@ -42,6 +34,10 @@
     },
     "id_own_user": {
       "type": "biginteger",
+      "required": false
+    },
+    "Nombre_Responsable": {
+      "type": "string",
       "required": true
     }
   }

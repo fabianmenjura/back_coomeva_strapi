@@ -5,23 +5,53 @@ const { createCoreController } = require('@strapi/strapi').factories;
 module.exports = createCoreController('api::presentacion.presentacion', ({ strapi }) => ({
 
  //METODO GET, LISTAR PRESENTACIONES
-  async findUserPresentations(ctx) {
-    const user = ctx.state.user;  // Obtener el usuario autenticado
+async findUserPresentations(ctx) {
+  const user = ctx.state.user;  // Obtener el usuario autenticado
 
-    if (!user) {
-      return ctx.unauthorized('User not authenticated');
+  if (!user) {
+    return ctx.unauthorized('User not authenticated');
+  }
+
+  // Filtrar presentaciones por el ID del usuario autenticado y poblar los servicios asociados y sus banners
+  const entities = await strapi.db.query('api::presentacion.presentacion').findMany({
+    where: { id_own_user: user.id },
+    populate: {
+      servicios: {
+        populate: {
+          Banner: true  // Ajusta 'Banner' al nombre del campo de relación correspondiente
+        }
+      }
     }
+  });
 
-    // Filtrar presentaciones por el ID del usuario autenticado
-    const entities = await strapi.db.query('api::presentacion.presentacion').findMany({
-      where: { id_own_user: user.id },
-    });
+  // Sanitizar las entidades antes de devolverlas
+  const sanitizedEntities = await this.sanitizeOutput(entities, ctx);
 
-    // Sanitizar las entidades antes de devolverlas
-    const sanitizedEntities = await this.sanitizeOutput(entities, ctx);
+  // Transformar la respuesta para que cumpla con la estructura deseada
+  const transformedResponse = {
+    data: sanitizedEntities.map(presentacion => ({
+      id: presentacion.id,
+      attributes: {
+        ...presentacion,
+        servicios: {
+          data: presentacion.servicios.map(servicio => ({
+            id: servicio.id,
+            attributes: {
+              ...servicio,
+              Banner: {
+                data: servicio.Banner ? [servicio.Banner] : null
+              }
+            }
+          }))
+        }
+      }
+    })),
+    meta: {}
+  };
 
-    return this.transformResponse(sanitizedEntities);
-  },
+  return this.transformResponse(transformedResponse);
+},
+
 
   async updateUserPresentation(ctx) {
     const user = ctx.state.user;  // Obtener el usuario autenticado

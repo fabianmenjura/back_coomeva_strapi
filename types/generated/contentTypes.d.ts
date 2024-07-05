@@ -416,8 +416,6 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
   };
   attributes: {
     Empresa: Attribute.String & Attribute.Required;
-    NIT: Attribute.String & Attribute.Required;
-    Contacto: Attribute.String & Attribute.Required;
     Cargo: Attribute.String;
     Celular: Attribute.BigInteger;
     Correo: Attribute.Email & Attribute.Required;
@@ -426,7 +424,8 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
       'oneToMany',
       'api::servicio.servicio'
     >;
-    id_own_user: Attribute.BigInteger & Attribute.Required;
+    id_own_user: Attribute.BigInteger;
+    Nombre_Responsable: Attribute.String & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
