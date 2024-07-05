@@ -19,6 +19,14 @@ module.exports = {
       },
     },
     {
+      method: 'GET',
+      path: '/presentaciones/:id',
+      handler: 'custom-presentacion.findOnePresentation',
+      config: {
+        policies: [],
+      },
+    },
+    {
       method: 'PUT',
       path: '/presentaciones/:id',
       handler: 'custom-presentacion.updateUserPresentation',

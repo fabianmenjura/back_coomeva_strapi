@@ -55,7 +55,63 @@ module.exports = createCoreController(
       return this.transformResponse(transformedResponse);
     },
 
+    async findOnePresentation(ctx) {
+      const user = ctx.state.user; // Obtener el usuario autenticado
 
+      if (!user) {
+        return ctx.unauthorized("Usuario no autenticado");
+      }
+
+      const { id } = ctx.params;
+
+      // Buscar una presentación específica por ID y verificar que pertenezca al usuario autenticado
+      const presentation = await strapi.db
+        .query("api::presentacion.presentacion")
+        .findOne({
+          where: { id, id_own_user: user.id },
+          populate: {
+            servicios: {
+              populate: {
+                Banner: true,
+              },
+            },
+          },
+        });
+
+      if (!presentation) {
+        return ctx.notFound("Presentación no encontrada");
+      }
+
+      // Sanitizar la presentación antes de devolverla
+      const sanitizedPresentation = await this.sanitizeOutput(
+        presentation,
+        ctx
+      );
+
+      // Transformar la respuesta para que cumpla con la estructura deseada
+      const transformedResponse = {
+        data: {
+          id: sanitizedPresentation.id,
+          attributes: {
+            ...sanitizedPresentation,
+            servicios: {
+              data: sanitizedPresentation.servicios.map((servicio) => ({
+                id: servicio.id,
+                attributes: {
+                  ...servicio,
+                  Banner: {
+                    data: servicio.Banner ? [servicio.Banner] : null,
+                  },
+                },
+              })),
+            },
+          },
+        },
+        meta: {},
+      };
+
+      return this.transformResponse(transformedResponse);
+    },
 
     async updateUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
@@ -76,7 +132,6 @@ module.exports = createCoreController(
       if (!existingEntity) {
         return ctx.unauthorized("Solo autores");
       }
-
 
       ctx.request.body.data = {
         ...ctx.request.body.data,
