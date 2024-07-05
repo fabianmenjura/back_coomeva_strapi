@@ -385,6 +385,8 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
     Slug: Attribute.UID<'api::motivador.motivador', 'Titulo'> &
       Attribute.Required;
     Publico_Objetivo: Attribute.Component<'a.publico'>;
+    Color: Attribute.String &
+      Attribute.CustomField<'plugin::color-picker.color'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -426,8 +428,6 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
     >;
     id_own_user: Attribute.BigInteger;
     Nombre_Responsable: Attribute.String & Attribute.Required;
-    Color: Attribute.String &
-      Attribute.CustomField<'plugin::color-picker.color'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

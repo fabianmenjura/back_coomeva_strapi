@@ -10,7 +10,7 @@ module.exports = createCoreController(
       const user = ctx.state.user; // Obtener el usuario autenticado
 
       if (!user) {
-        return ctx.unauthorized("User not authenticated");
+        return ctx.unauthorized("Usuario no autenticado");
       }
 
       // Filtrar presentaciones por el ID del usuario autenticado y poblar los servicios asociados y sus banners
@@ -55,11 +55,13 @@ module.exports = createCoreController(
       return this.transformResponse(transformedResponse);
     },
 
+
+
     async updateUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
 
       if (!user) {
-        return ctx.unauthorized("User not authenticated");
+        return ctx.unauthorized("Usuario no autenticado");
       }
 
       const { id } = ctx.params;
@@ -68,14 +70,14 @@ module.exports = createCoreController(
       const existingEntity = await strapi.db
         .query("api::presentacion.presentacion")
         .findOne({
-          where: { id, created_by_id: user.id },
+          where: { id, id_own_user: user.id },
         });
 
       if (!existingEntity) {
-        return ctx.unauthorized("You can only update your own presentations");
+        return ctx.unauthorized("Solo autores");
       }
 
-      // Asegurarse de que el campo created_by_id no cambie
+
       ctx.request.body.data = {
         ...ctx.request.body.data,
         created_by_id: existingEntity.created_by_id, // Mantener el ID del creador original
@@ -93,7 +95,7 @@ module.exports = createCoreController(
       const user = ctx.state.user; // Obtener el usuario autenticado
 
       if (!user) {
-        return ctx.unauthorized("User not authenticated");
+        return ctx.unauthorized("Usuario no autenticado");
       }
 
       const { id } = ctx.params;
@@ -102,11 +104,11 @@ module.exports = createCoreController(
       const existingEntity = await strapi.db
         .query("api::presentacion.presentacion")
         .findOne({
-          where: { id, created_by_id: user.id },
+          where: { id, id_own_user: user.id },
         });
 
       if (!existingEntity) {
-        return ctx.unauthorized("You can only delete your own presentations");
+        return ctx.unauthorized("Solo autores");
       }
 
       // Llamar a la función `delete` del controlador base
@@ -120,7 +122,7 @@ module.exports = createCoreController(
       const user = ctx.state.user; // Obtener el usuario autenticado
 
       if (!user) {
-        return ctx.unauthorized("User not authenticated");
+        return ctx.unauthorized("Usuario no autenticado");
       }
 
       ctx.request.body.data.id_own_user = user.id;
