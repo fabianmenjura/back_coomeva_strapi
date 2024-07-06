@@ -17,7 +17,7 @@ module.exports = {
     }
   },
 
-  generatePDF: async (data) => {
+  generatePDF: async (data, fileName) => {
     const templatePath = path.join(__dirname, 'template.ejs');
     const htmlTemplate = fs.readFileSync(templatePath, 'utf-8');
 
@@ -38,7 +38,7 @@ module.exports = {
     const htmlContent = ejs.render(htmlTemplate, { data, logoUrl, fondoUrl, fontPath });
 
     const options = { format: 'A4'};
-    const filePath = path.join(__dirname, '../../../../public/uploads/pdf', 'output.pdf');
+    const filePath = path.join(__dirname, '../../../../public/uploads/pdf', fileName);
 
     return new Promise((resolve, reject) => {
       htmlPdf.create(htmlContent, options).toFile(filePath, (err, res) => {

@@ -362,6 +362,166 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiDiapositivaInicialDiapositivaInicial
+  extends Schema.SingleType {
+  collectionName: 'diapositiva_inicials';
+  info: {
+    singularName: 'diapositiva-inicial';
+    pluralName: 'diapositiva-inicials';
+    displayName: 'DiapositivaInicial';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Titulo: Attribute.String;
+    Logo: Attribute.Media;
+    Fondo: Attribute.Media;
+    Descripcion: Attribute.Blocks;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::diapositiva-inicial.diapositiva-inicial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::diapositiva-inicial.diapositiva-inicial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiMotivadorMotivador extends Schema.CollectionType {
+  collectionName: 'motivadors';
+  info: {
+    singularName: 'motivador';
+    pluralName: 'motivadors';
+    displayName: 'Motivador';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Titulo: Attribute.String & Attribute.Required;
+    Descripcion: Attribute.Blocks & Attribute.Required;
+    Banner: Attribute.Media;
+    servicios: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToMany',
+      'api::servicio.servicio'
+    >;
+    Slug: Attribute.UID<'api::motivador.motivador', 'Titulo'> &
+      Attribute.Required;
+    Publico_Objetivo: Attribute.Component<'a.publico'>;
+    Color: Attribute.String &
+      Attribute.CustomField<'plugin::color-picker.color'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::motivador.motivador',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPresentacionPresentacion extends Schema.CollectionType {
+  collectionName: 'presentacions';
+  info: {
+    singularName: 'presentacion';
+    pluralName: 'presentacions';
+    displayName: 'Presentacion';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Empresa: Attribute.String & Attribute.Required;
+    Cargo: Attribute.String;
+    Celular: Attribute.BigInteger;
+    Correo: Attribute.Email & Attribute.Required;
+    servicios: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'oneToMany',
+      'api::servicio.servicio'
+    >;
+    id_own_user: Attribute.BigInteger;
+    Nombre_Responsable: Attribute.String & Attribute.Required;
+    DownloadPDF: Attribute.String;
+    Estado: Attribute.Enumeration<['Borrador', 'Enviado']> &
+      Attribute.DefaultTo<'Borrador'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiServicioServicio extends Schema.CollectionType {
+  collectionName: 'servicios';
+  info: {
+    singularName: 'servicio';
+    pluralName: 'servicios';
+    displayName: 'Servicio';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Titulo: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 3;
+      }>;
+    Descripcion_Corta: Attribute.Text;
+    Descripcion_Ampliada: Attribute.Blocks;
+    Bullets: Attribute.String;
+    Banner: Attribute.Media;
+    Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::servicio.servicio',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::servicio.servicio',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -787,164 +947,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiDiapositivaInicialDiapositivaInicial
-  extends Schema.SingleType {
-  collectionName: 'diapositiva_inicials';
-  info: {
-    singularName: 'diapositiva-inicial';
-    pluralName: 'diapositiva-inicials';
-    displayName: 'DiapositivaInicial';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    Titulo: Attribute.String;
-    Logo: Attribute.Media;
-    Fondo: Attribute.Media;
-    Descripcion: Attribute.Blocks;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::diapositiva-inicial.diapositiva-inicial',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::diapositiva-inicial.diapositiva-inicial',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiMotivadorMotivador extends Schema.CollectionType {
-  collectionName: 'motivadors';
-  info: {
-    singularName: 'motivador';
-    pluralName: 'motivadors';
-    displayName: 'Motivador';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Titulo: Attribute.String & Attribute.Required;
-    Descripcion: Attribute.Blocks & Attribute.Required;
-    Banner: Attribute.Media;
-    servicios: Attribute.Relation<
-      'api::motivador.motivador',
-      'oneToMany',
-      'api::servicio.servicio'
-    >;
-    Slug: Attribute.UID<'api::motivador.motivador', 'Titulo'> &
-      Attribute.Required;
-    Publico_Objetivo: Attribute.Component<'a.publico'>;
-    Color: Attribute.String &
-      Attribute.CustomField<'plugin::color-picker.color'>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::motivador.motivador',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::motivador.motivador',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiPresentacionPresentacion extends Schema.CollectionType {
-  collectionName: 'presentacions';
-  info: {
-    singularName: 'presentacion';
-    pluralName: 'presentacions';
-    displayName: 'Presentacion';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    Empresa: Attribute.String & Attribute.Required;
-    Cargo: Attribute.String;
-    Celular: Attribute.BigInteger;
-    Correo: Attribute.Email & Attribute.Required;
-    servicios: Attribute.Relation<
-      'api::presentacion.presentacion',
-      'oneToMany',
-      'api::servicio.servicio'
-    >;
-    id_own_user: Attribute.BigInteger;
-    Nombre_Responsable: Attribute.String & Attribute.Required;
-    DownloadPDF: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::presentacion.presentacion',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::presentacion.presentacion',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiServicioServicio extends Schema.CollectionType {
-  collectionName: 'servicios';
-  info: {
-    singularName: 'servicio';
-    pluralName: 'servicios';
-    displayName: 'Servicio';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Titulo: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        minLength: 3;
-      }>;
-    Descripcion_Corta: Attribute.Text;
-    Descripcion_Ampliada: Attribute.Blocks;
-    Bullets: Attribute.String;
-    Banner: Attribute.Media;
-    Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::servicio.servicio',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::servicio.servicio',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -955,6 +957,10 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::diapositiva-inicial.diapositiva-inicial': ApiDiapositivaInicialDiapositivaInicial;
+      'api::motivador.motivador': ApiMotivadorMotivador;
+      'api::presentacion.presentacion': ApiPresentacionPresentacion;
+      'api::servicio.servicio': ApiServicioServicio;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -963,10 +969,6 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::diapositiva-inicial.diapositiva-inicial': ApiDiapositivaInicialDiapositivaInicial;
-      'api::motivador.motivador': ApiMotivadorMotivador;
-      'api::presentacion.presentacion': ApiPresentacionPresentacion;
-      'api::servicio.servicio': ApiServicioServicio;
     }
   }
 }

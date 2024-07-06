@@ -42,6 +42,14 @@
     },
     "DownloadPDF": {
       "type": "string"
+    },
+    "Estado": {
+      "type": "enumeration",
+      "enum": [
+        "Borrador",
+        "Enviado"
+      ],
+      "default": "Borrador"
     }
   }
 }
