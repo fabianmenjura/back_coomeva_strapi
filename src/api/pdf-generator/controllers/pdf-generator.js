@@ -6,8 +6,8 @@ module.exports = {
       const data = await strapi.service('api::pdf-generator.pdf-generator').fetchExternalData();
       
       // Generar un timestamp para el nombre del archivo
-      const timestamp = Date.now(); // Puedes usar también una biblioteca como uuid para un identificador único
-      const fileName = `output_${timestamp}.pdf`;
+      const timestamp = Date.now();
+      const fileName = `Presentación_${timestamp}.pdf`;
       const filePath = await strapi.service('api::pdf-generator.pdf-generator').generatePDF(data, fileName);
   
       ctx.send({

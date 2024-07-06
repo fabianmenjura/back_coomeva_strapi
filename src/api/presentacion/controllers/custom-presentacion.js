@@ -186,6 +186,8 @@ module.exports = createCoreController(
       }
       // Añadir el usuario autenticado como dueño de la presentación
       ctx.request.body.data.id_own_user = user.id;
+
+      //Crear pdf y añadir a la presentación
       ctx.request.body.data.DownloadPDF = downloadPDFUrl;
 
       // Llamar a la función `create` del controlador base
