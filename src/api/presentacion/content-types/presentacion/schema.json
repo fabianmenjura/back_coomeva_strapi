@@ -49,8 +49,9 @@
     },
     "empresa": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::empresa.empresa"
+      "relation": "manyToOne",
+      "target": "api::empresa.empresa",
+      "inversedBy": "presentacions"
     }
   }
 }

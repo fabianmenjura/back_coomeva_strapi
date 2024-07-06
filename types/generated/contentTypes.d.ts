@@ -836,6 +836,11 @@ export interface ApiEmpresaEmpresa extends Schema.CollectionType {
     Nombre: Attribute.String & Attribute.Required;
     Descripcion: Attribute.Text;
     Imagen: Attribute.Media;
+    presentacions: Attribute.Relation<
+      'api::empresa.empresa',
+      'oneToMany',
+      'api::presentacion.presentacion'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -922,7 +927,7 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
       Attribute.DefaultTo<'Borrador'>;
     empresa: Attribute.Relation<
       'api::presentacion.presentacion',
-      'oneToOne',
+      'manyToOne',
       'api::empresa.empresa'
     >;
     createdAt: Attribute.DateTime;

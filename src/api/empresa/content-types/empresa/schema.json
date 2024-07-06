@@ -26,6 +26,12 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "presentacions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::presentacion.presentacion",
+      "mappedBy": "empresa"
     }
   }
 }

@@ -1,6 +1,7 @@
 "use strict";
 const axios = require("axios");
 const { createCoreController } = require("@strapi/strapi").factories;
+const _ = require("lodash");
 
 module.exports = createCoreController(
   "api::presentacion.presentacion",
@@ -13,7 +14,7 @@ module.exports = createCoreController(
         return ctx.unauthorized("Usuario no autenticado");
       }
 
-      // Filtrar presentaciones por el ID del usuario autenticado y poblar los servicios asociados y sus banners
+      // Filtrar presentaciones por el ID del usuario autenticado y poblar los servicios asociados, sus banners y la empresa asociada con su imagen
       const entities = await strapi.db
         .query("api::presentacion.presentacion")
         .findMany({
@@ -24,31 +25,56 @@ module.exports = createCoreController(
                 Banner: true,
               },
             },
+            empresa: {
+              populate: {
+                Imagen: true,
+              },
+            },
           },
         });
+
+      // Clonar profundamente los datos antes de la sanitización
+      const clonedEntities = _.cloneDeep(entities);
 
       // Sanitizar las entidades antes de devolverlas
       const sanitizedEntities = await this.sanitizeOutput(entities, ctx);
 
-      // Transformar la respuesta para que cumpla con la estructura deseada
+      // Reintroducir la información de empresa y su imagen en las entidades sanitizadas
       const transformedResponse = {
-        data: sanitizedEntities.map((presentacion) => ({
-          id: presentacion.id,
-          attributes: {
-            ...presentacion,
-            servicios: {
-              data: presentacion.servicios.map((servicio) => ({
-                id: servicio.id,
-                attributes: {
-                  ...servicio,
-                  Banner: {
-                    data: servicio.Banner ? [servicio.Banner] : null,
+        data: sanitizedEntities.map((presentacion, index) => {
+          const originalEntity = clonedEntities[index];
+
+          return {
+            id: presentacion.id,
+            attributes: {
+              ...presentacion,
+              servicios: {
+                data: presentacion.servicios.map((servicio) => ({
+                  id: servicio.id,
+                  attributes: {
+                    ...servicio,
+                    Banner: {
+                      data: servicio.Banner ? [servicio.Banner] : null,
+                    },
                   },
-                },
-              })),
+                })),
+              },
+              empresa: originalEntity.empresa
+                ? {
+                    id: originalEntity.empresa.id,
+                    attributes: {
+                      ...originalEntity.empresa,
+                      Imagen: {
+                        data: originalEntity.empresa.Imagen
+                          ? [originalEntity.empresa.Imagen]
+                          : null,
+                      },
+                    },
+                  }
+                : null,
             },
-          },
-        })),
+          };
+        }),
         meta: {},
       };
 
@@ -75,6 +101,11 @@ module.exports = createCoreController(
                 Banner: true,
               },
             },
+            empresa: {
+              populate: {
+                Imagen: true,
+              },
+            },
           },
         });
 
@@ -82,13 +113,16 @@ module.exports = createCoreController(
         return ctx.notFound("Presentación no encontrada");
       }
 
+      // Clonar profundamente los datos antes de la sanitización
+      const clonedPresentation = _.cloneDeep(presentation);
+
       // Sanitizar la presentación antes de devolverla
       const sanitizedPresentation = await this.sanitizeOutput(
         presentation,
         ctx
       );
 
-      // Transformar la respuesta para que cumpla con la estructura deseada
+      // Reintroducir la información de empresa y su imagen en la presentación sanitizada
       const transformedResponse = {
         data: {
           id: sanitizedPresentation.id,
@@ -105,6 +139,19 @@ module.exports = createCoreController(
                 },
               })),
             },
+            empresa: clonedPresentation.empresa
+              ? {
+                  id: clonedPresentation.empresa.id,
+                  attributes: {
+                    ...clonedPresentation.empresa,
+                    Imagen: {
+                      data: clonedPresentation.empresa.Imagen
+                        ? [clonedPresentation.empresa.Imagen]
+                        : null,
+                    },
+                  },
+                }
+              : null,
           },
         },
         meta: {},
