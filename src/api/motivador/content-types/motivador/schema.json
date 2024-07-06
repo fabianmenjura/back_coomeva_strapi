@@ -38,12 +38,6 @@
       "targetField": "Titulo",
       "required": true
     },
-    "Publico_Objetivo": {
-      "displayName": "Publico",
-      "type": "component",
-      "repeatable": false,
-      "component": "a.publico"
-    },
     "Color": {
       "type": "customField",
       "regex": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",

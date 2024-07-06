@@ -12,10 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Empresa": {
-      "type": "string",
-      "required": true
-    },
     "Cargo": {
       "type": "string",
       "required": false
@@ -50,6 +46,11 @@
         "Enviado"
       ],
       "default": "Borrador"
+    },
+    "empresa": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::empresa.empresa"
     }
   }
 }

@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_diapositiva_final_diapositiva_finals",
+  "info": {
+    "displayName": "DiapositivaFinal",
+    "icon": "layout",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Titulo": {
+      "type": "string",
+      "required": false
+    },
+    "Descripcion": {
+      "type": "blocks",
+      "required": false
+    }
+  }
+}
