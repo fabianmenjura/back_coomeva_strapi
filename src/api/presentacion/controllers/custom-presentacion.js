@@ -162,34 +162,52 @@ module.exports = createCoreController(
 
     async updateUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
-
+    
       if (!user) {
         return ctx.unauthorized("Usuario no autenticado");
       }
-
+    
       const { id } = ctx.params;
-
+    
       // Verificar que la presentación que se está actualizando pertenece al usuario autenticado
       const existingEntity = await strapi.db
         .query("api::presentacion.presentacion")
         .findOne({
           where: { id, id_own_user: user.id },
         });
-
+    
       if (!existingEntity) {
         return ctx.unauthorized("Solo autores");
       }
-
+    
       ctx.request.body.data = {
         ...ctx.request.body.data,
         created_by_id: existingEntity.created_by_id, // Mantener el ID del creador original
       };
-
-      // Llamar a la función `update` del controlador base
+    
+      // Llamar a la función `update` del controlador base para actualizar la presentación
       const response = await super.update(ctx);
-
+    
+      // Si se proporciona la relación empresa, actualizarla
+      if (ctx.request.body.data.empresa) {
+        await strapi.db.query("api::empresa.empresa").update({
+          where: { id: ctx.request.body.data.empresa.id },
+          data: ctx.request.body.data.empresa,
+        });
+      }
+    
+      // Si se proporcionan los servicios, actualizarlos
+      if (ctx.request.body.data.servicios) {
+        for (const servicio of ctx.request.body.data.servicios) {
+          await strapi.db.query("api::servicio.servicio").update({
+            where: { id: servicio.id },
+            data: servicio,
+          });
+        }
+      }
+    
       return response;
-    },
+    },    
 
     //=========================
     //ELIMINAR

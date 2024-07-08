@@ -930,6 +930,11 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
       'manyToOne',
       'api::empresa.empresa'
     >;
+    valor_agregado: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'manyToOne',
+      'api::valor-agregado.valor-agregado'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -988,6 +993,42 @@ export interface ApiServicioServicio extends Schema.CollectionType {
   };
 }
 
+export interface ApiValorAgregadoValorAgregado extends Schema.CollectionType {
+  collectionName: 'valor_agregados';
+  info: {
+    singularName: 'valor-agregado';
+    pluralName: 'valor-agregados';
+    displayName: 'ValorAgregado';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Titulo: Attribute.String;
+    presentacions: Attribute.Relation<
+      'api::valor-agregado.valor-agregado',
+      'oneToMany',
+      'api::presentacion.presentacion'
+    >;
+    PDF: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::valor-agregado.valor-agregado',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::valor-agregado.valor-agregado',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1011,6 +1052,7 @@ declare module '@strapi/types' {
       'api::motivador.motivador': ApiMotivadorMotivador;
       'api::presentacion.presentacion': ApiPresentacionPresentacion;
       'api::servicio.servicio': ApiServicioServicio;
+      'api::valor-agregado.valor-agregado': ApiValorAgregadoValorAgregado;
     }
   }
 }

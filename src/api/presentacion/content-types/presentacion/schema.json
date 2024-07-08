@@ -52,6 +52,12 @@
       "relation": "manyToOne",
       "target": "api::empresa.empresa",
       "inversedBy": "presentacions"
+    },
+    "valor_agregado": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::valor-agregado.valor-agregado",
+      "inversedBy": "presentacions"
     }
   }
 }
