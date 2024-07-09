@@ -243,7 +243,10 @@ module.exports = createCoreController(
         } else {
           console.error("El campo valor_agregado o PDF no está definido.");
         }
+      } else {
+        ctx.request.body.data.ValorAgregadoPDF = existingEntity.valor_agregado.PDF;
       }
+
       // Llamar a la función `update` del controlador base para actualizar la presentación
       const response = await super.update(ctx);
 
