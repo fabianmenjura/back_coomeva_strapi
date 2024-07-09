@@ -58,6 +58,9 @@
       "relation": "manyToOne",
       "target": "api::valor-agregado.valor-agregado",
       "inversedBy": "presentacions"
+    },
+    "ValorAgregadoPDF": {
+      "type": "string"
     }
   }
 }

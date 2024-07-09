@@ -935,6 +935,7 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
       'manyToOne',
       'api::valor-agregado.valor-agregado'
     >;
+    ValorAgregadoPDF: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

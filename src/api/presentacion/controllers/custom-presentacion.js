@@ -2,6 +2,8 @@
 const axios = require("axios");
 const { createCoreController } = require("@strapi/strapi").factories;
 const _ = require("lodash");
+const path = require("path");
+const fs = require("fs");
 
 module.exports = createCoreController(
   "api::presentacion.presentacion",
@@ -30,6 +32,7 @@ module.exports = createCoreController(
                 Imagen: true,
               },
             },
+            valor_agregado: true,
           },
         });
 
@@ -72,6 +75,14 @@ module.exports = createCoreController(
                     },
                   }
                 : null,
+              valor_agregado: originalEntity.valor_agregado
+                ? {
+                    id: originalEntity.valor_agregado.id,
+                    attributes: {
+                      ...originalEntity.valor_agregado,
+                    },
+                  }
+                : null,
             },
           };
         }),
@@ -106,6 +117,7 @@ module.exports = createCoreController(
                 Imagen: true,
               },
             },
+            valor_agregado: true,
           },
         });
 
@@ -152,6 +164,14 @@ module.exports = createCoreController(
                   },
                 }
               : null,
+            valor_agregado: clonedPresentation.valor_agregado
+              ? {
+                  id: clonedPresentation.valor_agregado.id,
+                  attributes: {
+                    ...clonedPresentation.valor_agregado,
+                  },
+                }
+              : null,
           },
         },
         meta: {},
@@ -162,32 +182,71 @@ module.exports = createCoreController(
 
     async updateUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
-    
+
       if (!user) {
         return ctx.unauthorized("Usuario no autenticado");
       }
-    
+
       const { id } = ctx.params;
-    
+
       // Verificar que la presentación que se está actualizando pertenece al usuario autenticado
       const existingEntity = await strapi.db
         .query("api::presentacion.presentacion")
         .findOne({
           where: { id, id_own_user: user.id },
+          populate: { valor_agregado: true }, // Asegurarse de poblar la relación valor_agregado
         });
-    
+
       if (!existingEntity) {
         return ctx.unauthorized("Solo autores");
       }
-    
+
       ctx.request.body.data = {
         ...ctx.request.body.data,
         created_by_id: existingEntity.created_by_id, // Mantener el ID del creador original
       };
-    
+
+      // Verificar si el estado es "Enviado"
+      if (ctx.request.body.data.Estado == "Enviado") {
+        console.log("La presentación ha sido enviada.");
+
+        // Verificar si hay un valor_agregado asociado
+        // console.log(existingEntity.valor_agregado);
+        if (
+          existingEntity.valor_agregado &&
+          existingEntity.valor_agregado.PDF
+        ) {
+          const pdfPath = existingEntity.valor_agregado.PDF;
+          // console.log(`PDF Path: ${pdfPath}`);
+          const pdfName = path.basename(pdfPath);
+          const publicFolderPath = path.join(
+            "public",
+            "uploads",
+            "ValorAgregadoPDF"
+          );
+          const publicFilePath = path.join(publicFolderPath, pdfName);
+
+          try {
+            // Crear la carpeta pública si no existe
+            if (!fs.existsSync(publicFolderPath)) {
+              fs.mkdirSync(publicFolderPath, { recursive: true });
+            }
+
+            // Copiar el archivo PDF de la carpeta privada a la carpeta pública
+            fs.copyFileSync(pdfPath, publicFilePath);
+
+            // Actualizar el campo PDF con la nueva ubicación en la base de datos de Strapi
+            ctx.request.body.data.ValorAgregadoPDF = publicFilePath;
+          } catch (error) {
+            console.error("Error al copiar el archivo PDF:", error);
+          }
+        } else {
+          console.error("El campo valor_agregado o PDF no está definido.");
+        }
+      }
       // Llamar a la función `update` del controlador base para actualizar la presentación
       const response = await super.update(ctx);
-    
+
       // Si se proporciona la relación empresa, actualizarla
       if (ctx.request.body.data.empresa) {
         await strapi.db.query("api::empresa.empresa").update({
@@ -195,7 +254,7 @@ module.exports = createCoreController(
           data: ctx.request.body.data.empresa,
         });
       }
-    
+
       // Si se proporcionan los servicios, actualizarlos
       if (ctx.request.body.data.servicios) {
         for (const servicio of ctx.request.body.data.servicios) {
@@ -205,10 +264,8 @@ module.exports = createCoreController(
           });
         }
       }
-    
       return response;
-    },    
-
+    },
     //=========================
     //ELIMINAR
     async deleteUserPresentation(ctx) {
@@ -255,6 +312,21 @@ module.exports = createCoreController(
       //Crear pdf y añadir a la presentación
       ctx.request.body.data.DownloadPDF = downloadPDFUrl;
 
+      // Verificar si se proporciona valor_agregado y extraer el campo PDF
+      if (ctx.request.body.data.valor_agregado) {
+        const valorAgregadoId = ctx.request.body.data.valor_agregado;
+
+        // Buscar el valor_agregado en la base de datos
+        const valorAgregado = await strapi.db
+          .query("api::valor-agregado.valor-agregado")
+          .findOne({
+            where: { id: valorAgregadoId },
+          });
+
+        if (valorAgregado && valorAgregado.PDF) {
+          ctx.request.body.data.ValorAgregadoPDF = valorAgregado.PDF;
+        }
+      }
       // Llamar a la función `create` del controlador base
       const response = await super.create(ctx);
 
