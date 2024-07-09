@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "valor_agregados",
+  "info": {
+    "singularName": "valor-agregado",
+    "pluralName": "valor-agregados",
+    "displayName": "ValorAgregado",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titulo": {
+      "type": "string"
+    },
+    "presentacions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::presentacion.presentacion",
+      "mappedBy": "valor_agregado"
+    },
+    "PDF": {
+      "type": "string"
+    }
+  }
+}

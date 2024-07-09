@@ -1,0 +1,43 @@
+{
+  "kind": "singleType",
+  "collectionName": "configuracion_generals",
+  "info": {
+    "singularName": "configuracion-general",
+    "pluralName": "configuracion-generals",
+    "displayName": "ConfiguracionGeneral",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "DiapositivaInicial": {
+      "type": "component",
+      "repeatable": false,
+      "component": "diapositiva-inicial.diapositiva-inicial",
+      "required": false
+    },
+    "FondoDiapositivaInicial": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "FondoDiapositivaFinal": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "DiapositivaFinal": {
+      "type": "component",
+      "repeatable": false,
+      "component": "diapositiva-final.diapositiva-final"
+    }
+  }
+}

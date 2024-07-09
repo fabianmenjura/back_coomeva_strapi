@@ -37,6 +37,11 @@
     "Slug": {
       "type": "uid",
       "targetField": "Titulo"
+    },
+    "PublicoObjetivo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "a.publico"
     }
   }
 }

@@ -12,10 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Empresa": {
-      "type": "string",
-      "required": true
-    },
     "Cargo": {
       "type": "string",
       "required": false
@@ -50,6 +46,21 @@
         "Enviado"
       ],
       "default": "Borrador"
+    },
+    "empresa": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::empresa.empresa",
+      "inversedBy": "presentacions"
+    },
+    "valor_agregado": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::valor-agregado.valor-agregado",
+      "inversedBy": "presentacions"
+    },
+    "ValorAgregadoPDF": {
+      "type": "string"
     }
   }
 }

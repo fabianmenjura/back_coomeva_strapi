@@ -787,33 +787,70 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiDiapositivaInicialDiapositivaInicial
+export interface ApiConfiguracionGeneralConfiguracionGeneral
   extends Schema.SingleType {
-  collectionName: 'diapositiva_inicials';
+  collectionName: 'configuracion_generals';
   info: {
-    singularName: 'diapositiva-inicial';
-    pluralName: 'diapositiva-inicials';
-    displayName: 'DiapositivaInicial';
+    singularName: 'configuracion-general';
+    pluralName: 'configuracion-generals';
+    displayName: 'ConfiguracionGeneral';
     description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    Titulo: Attribute.String;
-    Logo: Attribute.Media;
-    Fondo: Attribute.Media;
-    Descripcion: Attribute.Blocks;
+    DiapositivaInicial: Attribute.Component<'diapositiva-inicial.diapositiva-inicial'>;
+    FondoDiapositivaInicial: Attribute.Media;
+    FondoDiapositivaFinal: Attribute.Media;
+    DiapositivaFinal: Attribute.Component<'diapositiva-final.diapositiva-final'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::diapositiva-inicial.diapositiva-inicial',
+      'api::configuracion-general.configuracion-general',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::diapositiva-inicial.diapositiva-inicial',
+      'api::configuracion-general.configuracion-general',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiEmpresaEmpresa extends Schema.CollectionType {
+  collectionName: 'empresas';
+  info: {
+    singularName: 'empresa';
+    pluralName: 'empresas';
+    displayName: 'Empresa';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Nombre: Attribute.String & Attribute.Required;
+    Descripcion: Attribute.Text;
+    Imagen: Attribute.Media;
+    presentacions: Attribute.Relation<
+      'api::empresa.empresa',
+      'oneToMany',
+      'api::presentacion.presentacion'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::empresa.empresa',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::empresa.empresa',
       'oneToOne',
       'admin::user'
     > &
@@ -843,7 +880,6 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
     >;
     Slug: Attribute.UID<'api::motivador.motivador', 'Titulo'> &
       Attribute.Required;
-    Publico_Objetivo: Attribute.Component<'a.publico'>;
     Color: Attribute.String &
       Attribute.CustomField<'plugin::color-picker.color'>;
     createdAt: Attribute.DateTime;
@@ -876,7 +912,6 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    Empresa: Attribute.String & Attribute.Required;
     Cargo: Attribute.String;
     Celular: Attribute.BigInteger;
     Correo: Attribute.Email & Attribute.Required;
@@ -890,6 +925,17 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
     DownloadPDF: Attribute.String;
     Estado: Attribute.Enumeration<['Borrador', 'Enviado']> &
       Attribute.DefaultTo<'Borrador'>;
+    empresa: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'manyToOne',
+      'api::empresa.empresa'
+    >;
+    valor_agregado: Attribute.Relation<
+      'api::presentacion.presentacion',
+      'manyToOne',
+      'api::valor-agregado.valor-agregado'
+    >;
+    ValorAgregadoPDF: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -929,6 +975,7 @@ export interface ApiServicioServicio extends Schema.CollectionType {
     Bullets: Attribute.String;
     Banner: Attribute.Media;
     Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
+    PublicoObjetivo: Attribute.Component<'a.publico'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -940,6 +987,42 @@ export interface ApiServicioServicio extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::servicio.servicio',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiValorAgregadoValorAgregado extends Schema.CollectionType {
+  collectionName: 'valor_agregados';
+  info: {
+    singularName: 'valor-agregado';
+    pluralName: 'valor-agregados';
+    displayName: 'ValorAgregado';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Titulo: Attribute.String;
+    presentacions: Attribute.Relation<
+      'api::valor-agregado.valor-agregado',
+      'oneToMany',
+      'api::presentacion.presentacion'
+    >;
+    PDF: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::valor-agregado.valor-agregado',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::valor-agregado.valor-agregado',
       'oneToOne',
       'admin::user'
     > &
@@ -965,10 +1048,12 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::diapositiva-inicial.diapositiva-inicial': ApiDiapositivaInicialDiapositivaInicial;
+      'api::configuracion-general.configuracion-general': ApiConfiguracionGeneralConfiguracionGeneral;
+      'api::empresa.empresa': ApiEmpresaEmpresa;
       'api::motivador.motivador': ApiMotivadorMotivador;
       'api::presentacion.presentacion': ApiPresentacionPresentacion;
       'api::servicio.servicio': ApiServicioServicio;
+      'api::valor-agregado.valor-agregado': ApiValorAgregadoValorAgregado;
     }
   }
 }
