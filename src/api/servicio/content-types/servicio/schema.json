@@ -42,6 +42,12 @@
       "type": "component",
       "repeatable": false,
       "component": "a.publico"
+    },
+    "motivador": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::motivador.motivador",
+      "inversedBy": "servicios"
     }
   }
 }

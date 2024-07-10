@@ -936,6 +936,7 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
       'api::valor-agregado.valor-agregado'
     >;
     ValorAgregadoPDF: Attribute.String;
+    Nombre_Empresa: Attribute.String & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -976,6 +977,11 @@ export interface ApiServicioServicio extends Schema.CollectionType {
     Banner: Attribute.Media;
     Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
     PublicoObjetivo: Attribute.Component<'a.publico'>;
+    motivador: Attribute.Relation<
+      'api::servicio.servicio',
+      'manyToOne',
+      'api::motivador.motivador'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

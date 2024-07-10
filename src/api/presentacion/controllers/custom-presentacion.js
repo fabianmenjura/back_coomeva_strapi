@@ -102,14 +102,13 @@ module.exports = createCoreController(
       const { id } = ctx.params;
 
       // Buscar una presentación específica por ID y verificar que pertenezca al usuario autenticado
-      const presentation = await strapi.db
-        .query("api::presentacion.presentacion")
+      const presentation = await strapi.query("api::presentacion.presentacion")
         .findOne({
           where: { id, id_own_user: user.id },
           populate: {
             servicios: {
               populate: {
-                Banner: true,
+                motivador: true,
               },
             },
             empresa: {
@@ -134,23 +133,43 @@ module.exports = createCoreController(
         ctx
       );
 
-      // Reintroducir la información de empresa y su imagen en la presentación sanitizada
+      // Filtrar servicios que tienen motivador y agrupar por motivador
+      const serviciosConMotivador = sanitizedPresentation.servicios.filter(
+        (servicio) => servicio.motivador
+      );
+
+      const serviciosPorMotivador = _.groupBy(
+        serviciosConMotivador,
+        (servicio) => servicio.motivador.id
+      );
+
+      // Transformar la respuesta según la estructura deseada
       const transformedResponse = {
         data: {
           id: sanitizedPresentation.id,
           attributes: {
             ...sanitizedPresentation,
-            servicios: {
-              data: sanitizedPresentation.servicios.map((servicio) => ({
-                id: servicio.id,
-                attributes: {
-                  ...servicio,
-                  Banner: {
-                    data: servicio.Banner ? [servicio.Banner] : null,
+            servicios: undefined, // Eliminamos los servicios directos para luego estructurarlos por motivador
+            motivador: Object.keys(serviciosPorMotivador).map(
+              (motivadorId) => {
+                const motivador =
+                  serviciosPorMotivador[motivadorId][0].motivador; // Tomamos el primer servicio del motivador para obtener los datos del motivador
+                return {
+                  id: motivador.id,
+                  attributes: {
+                    ...motivador,
+                    servicios: {
+                      data: serviciosPorMotivador[motivadorId].map(
+                        (servicio) => ({
+                          id: servicio.id,
+                          attributes: { ...servicio },
+                        })
+                      ),
+                    },
                   },
-                },
-              })),
-            },
+                };
+              }
+            ),
             empresa: clonedPresentation.empresa
               ? {
                   id: clonedPresentation.empresa.id,
@@ -167,9 +186,7 @@ module.exports = createCoreController(
             valor_agregado: clonedPresentation.valor_agregado
               ? {
                   id: clonedPresentation.valor_agregado.id,
-                  attributes: {
-                    ...clonedPresentation.valor_agregado,
-                  },
+                  attributes: { ...clonedPresentation.valor_agregado },
                 }
               : null,
           },
@@ -244,7 +261,8 @@ module.exports = createCoreController(
           console.error("El campo valor_agregado o PDF no está definido.");
         }
       } else {
-        ctx.request.body.data.ValorAgregadoPDF = existingEntity.valor_agregado.PDF;
+        ctx.request.body.data.ValorAgregadoPDF =
+          existingEntity.valor_agregado.PDF;
       }
 
       // Llamar a la función `update` del controlador base para actualizar la presentación

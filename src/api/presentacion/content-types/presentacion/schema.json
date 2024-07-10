@@ -61,6 +61,10 @@
     },
     "ValorAgregadoPDF": {
       "type": "string"
+    },
+    "Nombre_Empresa": {
+      "type": "string",
+      "required": true
     }
   }
 }

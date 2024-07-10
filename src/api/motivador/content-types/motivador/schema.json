@@ -31,7 +31,8 @@
     "servicios": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::servicio.servicio"
+      "target": "api::servicio.servicio",
+      "mappedBy": "motivador"
     },
     "Slug": {
       "type": "uid",
