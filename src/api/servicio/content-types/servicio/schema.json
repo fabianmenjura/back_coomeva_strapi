@@ -23,7 +23,7 @@
     "Descripcion_Ampliada": {
       "type": "blocks"
     },
-    "Bullets": {
+    "Bullets1": {
       "type": "string"
     },
     "Banner": {
@@ -48,6 +48,24 @@
       "relation": "manyToOne",
       "target": "api::motivador.motivador",
       "inversedBy": "servicios"
+    },
+    "Bullets2": {
+      "type": "string"
+    },
+    "Bullets3": {
+      "type": "string"
+    },
+    "Bullets4": {
+      "type": "string"
+    },
+    "Bullets5": {
+      "type": "string"
+    },
+    "Bullets6": {
+      "type": "string"
+    },
+    "MasInformacion": {
+      "type": "string"
     }
   }
 }

@@ -973,7 +973,7 @@ export interface ApiServicioServicio extends Schema.CollectionType {
       }>;
     Descripcion_Corta: Attribute.Text;
     Descripcion_Ampliada: Attribute.Blocks;
-    Bullets: Attribute.String;
+    Bullets1: Attribute.String;
     Banner: Attribute.Media;
     Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
     PublicoObjetivo: Attribute.Component<'a.publico'>;
@@ -982,6 +982,12 @@ export interface ApiServicioServicio extends Schema.CollectionType {
       'manyToOne',
       'api::motivador.motivador'
     >;
+    Bullets2: Attribute.String;
+    Bullets3: Attribute.String;
+    Bullets4: Attribute.String;
+    Bullets5: Attribute.String;
+    Bullets6: Attribute.String;
+    MasInformacion: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
