@@ -109,6 +109,8 @@ module.exports = createCoreController(
             servicios: {
               populate: {
                 motivador: true,
+                Banner: true,
+                PublicoObjetivo: true,
               },
             },
             empresa: {
