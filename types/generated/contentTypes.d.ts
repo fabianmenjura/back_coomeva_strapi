@@ -972,7 +972,6 @@ export interface ApiServicioServicio extends Schema.CollectionType {
         minLength: 3;
       }>;
     Descripcion_Corta: Attribute.Text;
-    Descripcion_Ampliada: Attribute.Blocks;
     Bullets1: Attribute.String;
     Banner: Attribute.Media;
     Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
@@ -988,6 +987,7 @@ export interface ApiServicioServicio extends Schema.CollectionType {
     Bullets5: Attribute.String;
     Bullets6: Attribute.String;
     MasInformacion: Attribute.String;
+    Descripcion_Ampliada: Attribute.RichText;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -20,9 +20,6 @@
     "Descripcion_Corta": {
       "type": "text"
     },
-    "Descripcion_Ampliada": {
-      "type": "blocks"
-    },
     "Bullets1": {
       "type": "string"
     },
@@ -66,6 +63,9 @@
     },
     "MasInformacion": {
       "type": "string"
+    },
+    "Descripcion_Ampliada": {
+      "type": "richtext"
     }
   }
 }

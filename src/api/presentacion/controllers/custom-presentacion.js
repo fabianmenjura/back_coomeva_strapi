@@ -102,7 +102,8 @@ module.exports = createCoreController(
       const { id } = ctx.params;
 
       // Buscar una presentación específica por ID y verificar que pertenezca al usuario autenticado
-      const presentation = await strapi.query("api::presentacion.presentacion")
+      const presentation = await strapi
+        .query("api::presentacion.presentacion")
         .findOne({
           where: { id, id_own_user: user.id },
           populate: {
@@ -152,26 +153,23 @@ module.exports = createCoreController(
           attributes: {
             ...sanitizedPresentation,
             servicios: undefined, // Eliminamos los servicios directos para luego estructurarlos por motivador
-            motivador: Object.keys(serviciosPorMotivador).map(
-              (motivadorId) => {
-                const motivador =
-                  serviciosPorMotivador[motivadorId][0].motivador; // Tomamos el primer servicio del motivador para obtener los datos del motivador
-                return {
-                  id: motivador.id,
-                  attributes: {
-                    ...motivador,
-                    servicios: {
-                      data: serviciosPorMotivador[motivadorId].map(
-                        (servicio) => ({
-                          id: servicio.id,
-                          attributes: { ...servicio },
-                        })
-                      ),
-                    },
+            motivador: Object.keys(serviciosPorMotivador).map((motivadorId) => {
+              const motivador = serviciosPorMotivador[motivadorId][0].motivador; // Tomamos el primer servicio del motivador para obtener los datos del motivador
+              return {
+                id: motivador.id,
+                attributes: {
+                  ...motivador,
+                  servicios: {
+                    data: serviciosPorMotivador[motivadorId].map(
+                      (servicio) => ({
+                        id: servicio.id,
+                        attributes: { ...servicio },
+                      })
+                    ),
                   },
-                };
-              }
-            ),
+                },
+              };
+            }),
             empresa: clonedPresentation.empresa
               ? {
                   id: clonedPresentation.empresa.id,
@@ -195,7 +193,35 @@ module.exports = createCoreController(
         },
         meta: {},
       };
+      // Obtener motivadores de la API
+      const todosMotivadores = await strapi
+        .query("api::motivador.motivador")
+        .findMany({
+          select: ["id", "Titulo"],
+        });
 
+      // Crear un Set de IDs de motivadores que tienen servicios
+      const motivadoresConServiciosIds = new Set(
+        transformedResponse.data.attributes.motivador.map(
+          (motivador) => motivador.id
+        )
+      );
+
+      // Filtrar motivadores sin servicios
+      const motivadoresSinServicios = todosMotivadores
+        .filter((motivador) => !motivadoresConServiciosIds.has(motivador.id))
+        .map((motivador) => ({
+          id: motivador.id,
+          attributes: {
+            Titulo: motivador.Titulo,
+          },
+        }));
+
+      // Agregar motivadores sin servicios a la respuesta
+      transformedResponse.data.attributes.motivador.push(
+        ...motivadoresSinServicios
+      );
+      // console.log(transformedResponse);
       return this.transformResponse(transformedResponse);
     },
 
