@@ -197,7 +197,7 @@ module.exports = createCoreController(
       const todosMotivadores = await strapi
         .query("api::motivador.motivador")
         .findMany({
-          select: ["id", "Titulo"],
+          select: ["id", "Titulo","Color","Slug"],
         });
 
       // Crear un Set de IDs de motivadores que tienen servicios
@@ -214,6 +214,8 @@ module.exports = createCoreController(
           id: motivador.id,
           attributes: {
             Titulo: motivador.Titulo,
+            Slug: motivador.Slug,
+            Color: motivador.Color,
           },
         }));
 

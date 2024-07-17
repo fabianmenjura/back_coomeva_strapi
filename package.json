@@ -14,7 +14,7 @@
     "@strapi/plugin-color-picker": "^4.25.2",
     "@strapi/plugin-i18n": "4.24.3",
     "@strapi/plugin-users-permissions": "4.24.3",
-    "@strapi/provider-email-sendgrid": "^4.25.2",
+    "@strapi/provider-email-sendgrid": "^4.25.4",
     "@strapi/strapi": "4.24.3",
     "ejs": "^3.1.10",
     "html-pdf": "^3.0.1",
