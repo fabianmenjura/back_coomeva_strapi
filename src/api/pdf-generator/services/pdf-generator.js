@@ -9,7 +9,7 @@ const ejs = require('ejs');
 module.exports = {
   fetchExternalData: async () => {
     try {
-      const response = await axios.get('http://localhost:1337/api/presentacions');
+      const response = await axios.get('http://localhost:1337/api/presentaciones/87');
       return response.data.data;
     } catch (error) {
       console.error('Error al obtener datos: ', error);

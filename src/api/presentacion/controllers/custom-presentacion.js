@@ -95,9 +95,9 @@ module.exports = createCoreController(
     async findOnePresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
 
-      if (!user) {
-        return ctx.unauthorized("Usuario no autenticado");
-      }
+      // if (!user) {
+      //   return ctx.unauthorized("Usuario no autenticado");
+      // }
 
       const { id } = ctx.params;
 
@@ -105,7 +105,8 @@ module.exports = createCoreController(
       const presentation = await strapi
         .query("api::presentacion.presentacion")
         .findOne({
-          where: { id, id_own_user: user.id },
+          // where: { id, id_own_user: user.id },
+           where: { id:id},
           populate: {
             servicios: {
               populate: {
@@ -135,9 +136,9 @@ module.exports = createCoreController(
         presentation,
         ctx
       );
-
+   
       // Filtrar servicios que tienen motivador y agrupar por motivador
-      const serviciosConMotivador = sanitizedPresentation.servicios.filter(
+      const serviciosConMotivador = presentation.servicios.filter(
         (servicio) => servicio.motivador
       );
 
@@ -241,7 +242,7 @@ module.exports = createCoreController(
         .query("api::presentacion.presentacion")
         .findOne({
           where: { id, id_own_user: user.id },
-          populate: { valor_agregado: true }, // Asegurarse de poblar la relación valor_agregado
+          populate: { valor_agregado: true },
         });
 
       if (!existingEntity) {
