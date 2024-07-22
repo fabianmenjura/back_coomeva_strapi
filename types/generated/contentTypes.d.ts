@@ -836,10 +836,10 @@ export interface ApiEmpresaEmpresa extends Schema.CollectionType {
     Nombre: Attribute.String & Attribute.Required;
     Descripcion: Attribute.Text;
     Imagen: Attribute.Media;
-    presentacions: Attribute.Relation<
+    servicios: Attribute.Relation<
       'api::empresa.empresa',
       'oneToMany',
-      'api::presentacion.presentacion'
+      'api::servicio.servicio'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -925,11 +925,6 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
     DownloadPDF: Attribute.String;
     Estado: Attribute.Enumeration<['Borrador', 'Enviado']> &
       Attribute.DefaultTo<'Borrador'>;
-    empresa: Attribute.Relation<
-      'api::presentacion.presentacion',
-      'manyToOne',
-      'api::empresa.empresa'
-    >;
     valor_agregado: Attribute.Relation<
       'api::presentacion.presentacion',
       'manyToOne',
@@ -988,6 +983,11 @@ export interface ApiServicioServicio extends Schema.CollectionType {
     Bullets6: Attribute.String;
     MasInformacion: Attribute.String;
     Descripcion_Ampliada: Attribute.RichText;
+    empresa: Attribute.Relation<
+      'api::servicio.servicio',
+      'manyToOne',
+      'api::empresa.empresa'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -27,10 +27,10 @@
         "images"
       ]
     },
-    "presentacions": {
+    "servicios": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::presentacion.presentacion",
+      "target": "api::servicio.servicio",
       "mappedBy": "empresa"
     }
   }

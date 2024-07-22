@@ -47,12 +47,6 @@
       ],
       "default": "Borrador"
     },
-    "empresa": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::empresa.empresa",
-      "inversedBy": "presentacions"
-    },
     "valor_agregado": {
       "type": "relation",
       "relation": "manyToOne",

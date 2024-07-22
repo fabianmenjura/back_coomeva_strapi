@@ -66,6 +66,12 @@
     },
     "Descripcion_Ampliada": {
       "type": "richtext"
+    },
+    "empresa": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::empresa.empresa",
+      "inversedBy": "servicios"
     }
   }
 }

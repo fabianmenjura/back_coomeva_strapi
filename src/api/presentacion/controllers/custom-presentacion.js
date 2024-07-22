@@ -113,6 +113,7 @@ module.exports = createCoreController(
                 motivador: true,
                 Banner: true,
                 PublicoObjetivo: true,
+                empresa: true,
               },
             },
             empresa: {
@@ -171,19 +172,19 @@ module.exports = createCoreController(
                 },
               };
             }),
-            empresa: clonedPresentation.empresa
-              ? {
-                  id: clonedPresentation.empresa.id,
-                  attributes: {
-                    ...clonedPresentation.empresa,
-                    Imagen: {
-                      data: clonedPresentation.empresa.Imagen
-                        ? [clonedPresentation.empresa.Imagen]
-                        : null,
-                    },
-                  },
-                }
-              : null,
+            // empresa: clonedPresentation.empresa
+            //   ? {
+            //       id: clonedPresentation.empresa.id,
+            //       attributes: {
+            //         ...clonedPresentation.empresa,
+            //         Imagen: {
+            //           data: clonedPresentation.empresa.Imagen
+            //             ? [clonedPresentation.empresa.Imagen]
+            //             : null,
+            //         },
+            //       },
+            //     }
+            //   : null,
             valor_agregado: clonedPresentation.valor_agregado
               ? {
                   id: clonedPresentation.valor_agregado.id,
@@ -253,7 +254,8 @@ module.exports = createCoreController(
         ...ctx.request.body.data,
         created_by_id: existingEntity.created_by_id, // Mantener el ID del creador original
       };
-
+    // Eliminar el campo DownloadPDF para evitar su actualización
+    delete ctx.request.body.data.DownloadPDF;
       // Verificar si el estado es "Enviado"
       if (ctx.request.body.data.Estado == "Enviado") {
         console.log("La presentación ha sido enviada.");
@@ -292,8 +294,24 @@ module.exports = createCoreController(
           console.error("El campo valor_agregado o PDF no está definido.");
         }
       } else {
-        ctx.request.body.data.ValorAgregadoPDF =
-          existingEntity.valor_agregado.PDF;
+        // Verificar si se proporciona valor_agregado y extraer el campo PDF
+      if (ctx.request.body.data.valor_agregado) {
+        const valorAgregadoId = ctx.request.body.data.valor_agregado;
+
+        // Buscar el valor_agregado en la base de datos
+        const valorAgregado = await strapi.db
+          .query("api::valor-agregado.valor-agregado")
+          .findOne({
+            where: { id: valorAgregadoId },
+          });
+
+        if (valorAgregado && valorAgregado.PDF) {
+          ctx.request.body.data.ValorAgregadoPDF = valorAgregado.PDF;
+        }
+      }else {
+        ctx.request.body.data.valor_agregado = null;
+        ctx.request.body.data.ValorAgregadoPDF = null;
+      }
       }
 
       // Llamar a la función `update` del controlador base para actualizar la presentación
@@ -349,11 +367,11 @@ module.exports = createCoreController(
     //Crear presentaciones
     async createUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
-      const pdfResponse = await axios.get(
-        "http://localhost:1337/api/pdf-generator/download-pdf"
-      );
-      const server = "http://localhost:1337"; //editar en produccion
-      const downloadPDFUrl = server + pdfResponse.data.url;
+      // const pdfResponse = await axios.get(
+      //   "http://localhost:1337/api/pdf-generator/download-pdf"
+      // );
+      // const server = "http://localhost:1337"; //editar en produccion
+      // const downloadPDFUrl = server + pdfResponse.data.url;
 
       if (!user) {
         return ctx.unauthorized("Usuario no autenticado");
@@ -362,7 +380,7 @@ module.exports = createCoreController(
       ctx.request.body.data.id_own_user = user.id;
 
       //Crear pdf y añadir a la presentación
-      ctx.request.body.data.DownloadPDF = downloadPDFUrl;
+      // ctx.request.body.data.DownloadPDF = downloadPDFUrl;
 
       // Verificar si se proporciona valor_agregado y extraer el campo PDF
       if (ctx.request.body.data.valor_agregado) {
