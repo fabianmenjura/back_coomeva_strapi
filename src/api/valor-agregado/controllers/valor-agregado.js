@@ -29,7 +29,8 @@ module.exports = createCoreController(
       }
 
       const pdfFile = files["files.PDF"];
-      const pdfName = `valor_agregado_${Date.now()}_${pdfFile.name}`;
+      const pdfFileName = pdfFile.name.replace(/\s+/g, "");
+      const pdfName = `${Date.now()}_${pdfFileName}`;
       const relativeFolderPath = path.join("uploads", "pdf_no_enviado");
       const privateFolderPath = path.join(
         __dirname,
@@ -46,9 +47,9 @@ module.exports = createCoreController(
       if (!fs.existsSync(privateFolderPath)) {
         fs.mkdirSync(privateFolderPath, { recursive: true });
       }
-              // Obtener el protocolo y el host de la solicitud
-              const protocol = ctx.request.protocol;
-              const host = ctx.request.header.host;
+      // Obtener el protocolo y el host de la solicitud
+      const protocol = ctx.request.protocol;
+      const host = ctx.request.header.host;
       const fullUrl = `${protocol}://${host}/${relativeFolderPath}/${pdfName}`;
       const filePath = path.join(privateFolderPath, pdfName);
 

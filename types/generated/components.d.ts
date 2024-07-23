@@ -21,7 +21,7 @@ export interface DiapositivaFinalDiapositivaFinal extends Schema.Component {
   };
   attributes: {
     Titulo: Attribute.String;
-    Descripcion: Attribute.Blocks;
+    Descripcion: Attribute.RichText;
   };
 }
 
@@ -34,7 +34,7 @@ export interface DiapositivaInicialDiapositivaInicial extends Schema.Component {
   };
   attributes: {
     Titulo: Attribute.String;
-    Descripcion: Attribute.Blocks;
+    Descripcion: Attribute.RichText;
   };
 }
 

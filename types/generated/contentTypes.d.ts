@@ -871,7 +871,6 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
   };
   attributes: {
     Titulo: Attribute.String & Attribute.Required;
-    Descripcion: Attribute.Blocks & Attribute.Required;
     Banner: Attribute.Media;
     servicios: Attribute.Relation<
       'api::motivador.motivador',
@@ -882,6 +881,7 @@ export interface ApiMotivadorMotivador extends Schema.CollectionType {
       Attribute.Required;
     Color: Attribute.String &
       Attribute.CustomField<'plugin::color-picker.color'>;
+    Descripcion: Attribute.RichText & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
