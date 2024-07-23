@@ -30,6 +30,7 @@ module.exports = createCoreController(
 
       const pdfFile = files["files.PDF"];
       const pdfName = `valor_agregado_${Date.now()}_${pdfFile.name}`;
+      const relativeFolderPath = path.join("uploads", "pdf_no_enviado");
       const privateFolderPath = path.join(
         __dirname,
         "..",
@@ -45,7 +46,10 @@ module.exports = createCoreController(
       if (!fs.existsSync(privateFolderPath)) {
         fs.mkdirSync(privateFolderPath, { recursive: true });
       }
-
+              // Obtener el protocolo y el host de la solicitud
+              const protocol = ctx.request.protocol;
+              const host = ctx.request.header.host;
+      const fullUrl = `${protocol}://${host}/${relativeFolderPath}/${pdfName}`;
       const filePath = path.join(privateFolderPath, pdfName);
 
       // Crear la entrada en la colección valor-agregado con la URL del archivo PDF
@@ -54,7 +58,7 @@ module.exports = createCoreController(
         .create({
           data: {
             Titulo: pdfName,
-            PDF: filePath, // Guardar la ruta del archivo en el campo PDF
+            PDF: fullUrl, // Guardar la ruta del archivo en el campo PDF
             id_own_user: user.id, // Agregar el ID del usuario autenticado
           },
         });
