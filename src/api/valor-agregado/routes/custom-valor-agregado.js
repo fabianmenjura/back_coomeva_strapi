@@ -15,5 +15,14 @@ module.exports = {
           middlewares: [],
         },
       },
+      {
+        method: 'GET',
+        path: '/valor-agregado/mine',
+        handler: 'valor-agregado.findUserValorAgregado',
+        config: {
+          policies: [],
+          middlewares: [],
+        },
+      },
     ],
   };

@@ -1025,6 +1025,7 @@ export interface ApiValorAgregadoValorAgregado extends Schema.CollectionType {
       'api::presentacion.presentacion'
     >;
     PDF: Attribute.String;
+    id_own_user: Attribute.BigInteger;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

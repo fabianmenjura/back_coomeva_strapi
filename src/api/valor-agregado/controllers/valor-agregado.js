@@ -28,16 +28,19 @@ module.exports = createCoreController(
         return ctx.badRequest("El archivo PDF es requerido");
       }
 
-    //   if (!Titulo) {
-    //     return ctx.badRequest("El título es requerido");
-    //   }
-
       const pdfFile = files["files.PDF"];
       const pdfName = `valor_agregado_${Date.now()}_${pdfFile.name}`;
-      const privateFolderPath = path.join(__dirname,"..","..","private","pdfs");
-      const  Titulo  = pdfName;
-    //   console.log(Titulo);
-    //   return false;
+      const privateFolderPath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "public",
+        "uploads",
+        "pdf_no_enviado"
+      );
+
       // Crear la carpeta si no existe
       if (!fs.existsSync(privateFolderPath)) {
         fs.mkdirSync(privateFolderPath, { recursive: true });
@@ -50,16 +53,34 @@ module.exports = createCoreController(
         .query("api::valor-agregado.valor-agregado")
         .create({
           data: {
-            Titulo,
+            Titulo: pdfName,
             PDF: filePath, // Guardar la ruta del archivo en el campo PDF
-            // Agregar el ID del usuario autenticado
+            id_own_user: user.id, // Agregar el ID del usuario autenticado
           },
         });
+
       // Mover el archivo a la carpeta privada
       fs.renameSync(pdfFile.path, filePath);
 
       // Retornar la nueva entrada
       return newEntry;
+    },
+
+    async findUserValorAgregado(ctx) {
+      const user = ctx.state.user; // Obtener el usuario autenticado
+      if (!user) {
+        return ctx.unauthorized("Usuario no autenticado");
+      }
+
+      // Filtrar presentaciones por el ID del usuario autenticado
+      const entities = await strapi.db
+        .query("api::valor-agregado.valor-agregado")
+        .findMany({
+          where: { id_own_user: user.id },
+        });
+
+      // Enviar la respuesta con los registros encontrados
+      return this.transformResponse(entities);
     },
   })
 );

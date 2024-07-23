@@ -23,6 +23,9 @@
     },
     "PDF": {
       "type": "string"
+    },
+    "id_own_user": {
+      "type": "biginteger"
     }
   }
 }
