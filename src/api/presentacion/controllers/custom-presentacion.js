@@ -95,9 +95,9 @@ module.exports = createCoreController(
     async findOnePresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
 
-      // if (!user) {
-      //   return ctx.unauthorized("Usuario no autenticado");
-      // }
+      if (!user) {
+        return ctx.unauthorized("Usuario no autenticado");
+      }
 
       const { id } = ctx.params;
 
@@ -105,8 +105,8 @@ module.exports = createCoreController(
       const presentation = await strapi
         .query("api::presentacion.presentacion")
         .findOne({
-          // where: { id, id_own_user: user.id },
-           where: { id:id},
+          where: { id, id_own_user: user.id },
+          //  where: { id:id},
           populate: {
             servicios: {
               populate: {
@@ -137,7 +137,7 @@ module.exports = createCoreController(
         presentation,
         ctx
       );
-   
+
       // Filtrar servicios que tienen motivador y agrupar por motivador
       const serviciosConMotivador = presentation.servicios.filter(
         (servicio) => servicio.motivador
@@ -199,7 +199,7 @@ module.exports = createCoreController(
       const todosMotivadores = await strapi
         .query("api::motivador.motivador")
         .findMany({
-          select: ["id", "Titulo","Color","Slug"],
+          select: ["id", "Titulo", "Color", "Slug"],
         });
 
       // Crear un Set de IDs de motivadores que tienen servicios
@@ -254,10 +254,20 @@ module.exports = createCoreController(
         ...ctx.request.body.data,
         created_by_id: existingEntity.created_by_id, // Mantener el ID del creador original
       };
-    // Eliminar el campo DownloadPDF para evitar su actualización
-    delete ctx.request.body.data.DownloadPDF;
+
       // Verificar si el estado es "Enviado"
       if (ctx.request.body.data.Estado == "Enviado") {
+        // crear pdf
+        ctx.request.body.data.DownloadPDF = null;
+        const url = ctx.request.url;
+        const match = url.match(/\/api\/presentaciones\/(\d+)$/);
+        if (match) {
+          const number = match[1];
+          const pdfUrl = `https://strapipdf.existaya.com/generate.php?id=${number}`;
+          const pdfResponse = await axios.get(pdfUrl);
+          // console.log(pdfResponse.data.message); return false;
+          ctx.request.body.data.DownloadPDF = pdfResponse.data.message;
+        }
         console.log("La presentación ha sido enviada.");
 
         // Verificar si hay un valor_agregado asociado
@@ -295,23 +305,23 @@ module.exports = createCoreController(
         }
       } else {
         // Verificar si se proporciona valor_agregado y extraer el campo PDF
-      if (ctx.request.body.data.valor_agregado) {
-        const valorAgregadoId = ctx.request.body.data.valor_agregado;
+        if (ctx.request.body.data.valor_agregado) {
+          const valorAgregadoId = ctx.request.body.data.valor_agregado;
 
-        // Buscar el valor_agregado en la base de datos
-        const valorAgregado = await strapi.db
-          .query("api::valor-agregado.valor-agregado")
-          .findOne({
-            where: { id: valorAgregadoId },
-          });
+          // Buscar el valor_agregado en la base de datos
+          const valorAgregado = await strapi.db
+            .query("api::valor-agregado.valor-agregado")
+            .findOne({
+              where: { id: valorAgregadoId },
+            });
 
-        if (valorAgregado && valorAgregado.PDF) {
-          ctx.request.body.data.ValorAgregadoPDF = valorAgregado.PDF;
+          if (valorAgregado && valorAgregado.PDF) {
+            ctx.request.body.data.ValorAgregadoPDF = valorAgregado.PDF;
+          }
+        } else {
+          ctx.request.body.data.valor_agregado = null;
+          ctx.request.body.data.ValorAgregadoPDF = null;
         }
-      }else {
-        ctx.request.body.data.valor_agregado = null;
-        ctx.request.body.data.ValorAgregadoPDF = null;
-      }
       }
 
       // Llamar a la función `update` del controlador base para actualizar la presentación
@@ -367,9 +377,7 @@ module.exports = createCoreController(
     //Crear presentaciones
     async createUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
-      // const pdfResponse = await axios.get(
-      //   "http://localhost:1337/api/pdf-generator/download-pdf"
-      // );
+
       // const server = "http://localhost:1337"; //editar en produccion
       // const downloadPDFUrl = server + pdfResponse.data.url;
 
