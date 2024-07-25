@@ -64,6 +64,22 @@
       "target": "plugin::users-permissions.role",
       "inversedBy": "users",
       "configurable": false
+    },
+    "Nombres": {
+      "type": "string",
+      "required": true
+    },
+    "Apellidos": {
+      "type": "string",
+      "required": true
+    },
+    "Cargo": {
+      "type": "string",
+      "required": true
+    },
+    "Telefono": {
+      "type": "string",
+      "required": true
     }
   }
 }
