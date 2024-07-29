@@ -355,36 +355,31 @@ try {
           });
 
           // Preparar los datos que se enviarán a TopLeads
-          const sendData = {
-            data: {
-              attributes: {
-                id: id,
-                createdAt: response.data.attributes.createdAt,
-                updatedAt: response.data.attributes.updatedAt,
-                Cargo: response.data.attributes.Cargo,
-                Celular: response.data.attributes.Celular,
-                Correo: response.data.attributes.Correo,
-                Nombre_Responsable: response.data.attributes.Nombre_Responsable,
-                DownloadPDF: response.data.attributes.DownloadPDF,
-                Estado: response.data.attributes.Estado,
-                ValorAgregadoPDF: response.data.attributes.ValorAgregadoPDF,
-                Nombre_Empresa: response.data.attributes.Nombre_Empresa,
-                //Datos asesor
-                Id_asesor: userD.id,
-                Nombres_Asesor: userD.Nombres,
-                Apellidos_Asesor: userD.Apellidos,
-                Cargo_Asesor: userD.Apellidos,
-                Telefono_Asesor: userD.Telefono,
-                Email_Asesor: userD.email,
-              },
-            },
-            meta: {},
-          };
+          var formData = new FormData();
+          formData.append("id", id);
+          formData.append("createdAt", response.data.attributes.createdAt);
+          formData.append("updatedAt", response.data.attributes.updatedAt);
+          formData.append("cargo", response.data.attributes.Cargo);
+          formData.append("celular", response.data.attributes.Celular);
+          formData.append("correo", response.data.attributes.Correo);
+          formData.append("nombreResponsable", response.data.attributes.Nombre_Responsable);
+          formData.append("downloadPDF", response.data.attributes.DownloadPDF);
+          formData.append("estado", response.data.attributes.Estado);
+          formData.append("valorAgregadoPDF", response.data.attributes.ValorAgregadoPDF);
+          formData.append("nombreEmpresa", response.data.attributes.Nombre_Empresa);
+          //Asesor
+          formData.append("idAsesor", userD.id);
+          formData.append("nombresAsesor", userD.Nombres);
+          formData.append("apellidosAsesor", userD.Apellidos);
+          formData.append("cargoAsesor", userD.Cargo);
+          formData.append("telefonoAsesor", userD.Telefono);
+          formData.append("emailAsesor", userD.email);
+
           // console.log(sendData); return false;
           // Enviar los datos a la API de TopLeads utilizando axios
         await axios.post(
-            "http://127.0.0.1:8000/api/portafolio-coomeva/crear-contacto",
-            sendData,
+            "https://api.topleads.co/api/portafolio-coomeva/crear-contacto",
+            formData,
             {
               headers: {
                 "Content-Type": "application/json",
