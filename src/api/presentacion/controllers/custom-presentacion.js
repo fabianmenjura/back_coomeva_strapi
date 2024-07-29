@@ -268,11 +268,13 @@ module.exports = createCoreController(
           // console.log(pdfResponse.data.message); return false;
           ctx.request.body.data.DownloadPDF = pdfResponse.data.message;
         }
-        console.log("La presentación ha sido enviada.");
 
         // Verificar si hay un valor_agregado asociado
         // console.log(existingEntity.valor_agregado);
-        if (existingEntity.valor_agregado && ctx.request.body.data.valor_agregado != null) {
+        if (
+          existingEntity.valor_agregado &&
+          ctx.request.body.data.valor_agregado != null
+        ) {
           let pdfPath = existingEntity.valor_agregado.PDF;
           // Normalizar la ruta para evitar problemas con los separadores
           pdfPath = pdfPath.replace(/\\/g, "/");
@@ -325,7 +327,9 @@ module.exports = createCoreController(
             // console.log(publicFilePath); return false;
             const protocol = ctx.request.protocol;
             const host = ctx.request.header.host;
-            const ruta = path.join('uploads', 'ValorAgregadoPDF', pdfName).replace(/\\/g, '/'); // Normalizar el separador de directorios en la ruta final
+            const ruta = path
+              .join("uploads", "ValorAgregadoPDF", pdfName)
+              .replace(/\\/g, "/"); // Normalizar el separador de directorios en la ruta final
             // Actualizar el campo PDF con la nueva ubicación en la base de datos de Strapi
             ctx.request.body.data.ValorAgregadoPDF = `${protocol}://${host}/${ruta}`;
             // console.log(ctx.request.body.data.ValorAgregadoPDF); return false;
@@ -336,6 +340,62 @@ module.exports = createCoreController(
           ctx.request.body.data.valor_agregado = null;
           ctx.request.body.data.ValorAgregadoPDF = null;
           console.error("El campo valor_agregado o PDF no está definido.");
+        }
+        const response = await super.update(ctx);
+
+        /*=================================================
+ENVIAR DATOS A TOPLEADS
+===================================================*/
+try {
+        // Consultar información del usuario desde la colección de usuarios de Strapi
+        const userD = await strapi.db
+          .query("plugin::users-permissions.user")
+          .findOne({
+            where: { id: user.id },
+          });
+
+          // Preparar los datos que se enviarán a TopLeads
+          const sendData = {
+            data: {
+              attributes: {
+                id: id,
+                createdAt: response.data.attributes.createdAt,
+                updatedAt: response.data.attributes.updatedAt,
+                Cargo: response.data.attributes.Cargo,
+                Celular: response.data.attributes.Celular,
+                Correo: response.data.attributes.Correo,
+                Nombre_Responsable: response.data.attributes.Nombre_Responsable,
+                DownloadPDF: response.data.attributes.DownloadPDF,
+                Estado: response.data.attributes.Estado,
+                ValorAgregadoPDF: response.data.attributes.ValorAgregadoPDF,
+                Nombre_Empresa: response.data.attributes.Nombre_Empresa,
+                //Datos asesor
+                Id_asesor: userD.id,
+                Nombres_Asesor: userD.Nombres,
+                Apellidos_Asesor: userD.Apellidos,
+                Cargo_Asesor: userD.Apellidos,
+                Telefono_Asesor: userD.Telefono,
+                Email_Asesor: userD.email,
+              },
+            },
+            meta: {},
+          };
+          // console.log(sendData); return false;
+          // Enviar los datos a la API de TopLeads utilizando axios
+        await axios.post(
+            "http://127.0.0.1:8000/api/portafolio-coomeva/crear-contacto",
+            sendData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          // console.log(postResponse.data);
+          // return false;
+        } catch (error) {
+          // Manejo de errores
+          console.error("Error al enviar datos a TopLeads:", error);
         }
       } else {
         // Verificar si se proporciona valor_agregado y extraer el campo PDF
