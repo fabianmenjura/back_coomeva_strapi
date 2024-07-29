@@ -272,35 +272,69 @@ module.exports = createCoreController(
 
         // Verificar si hay un valor_agregado asociado
         // console.log(existingEntity.valor_agregado);
-        if (
-          existingEntity.valor_agregado &&
-          existingEntity.valor_agregado.PDF
-        ) {
-          const pdfPath = existingEntity.valor_agregado.PDF;
+        if (existingEntity.valor_agregado && ctx.request.body.data.valor_agregado != null) {
+          let pdfPath = existingEntity.valor_agregado.PDF;
+          // Normalizar la ruta para evitar problemas con los separadores
+          pdfPath = pdfPath.replace(/\\/g, "/");
+
           // console.log(`PDF Path: ${pdfPath}`);
           const pdfName = path.basename(pdfPath);
+
+          // Ruta del archivo en el sistema de archivos
+          const fullPdfPath = path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "..",
+            "public",
+            "uploads",
+            "pdf_no_enviado",
+            pdfName
+          );
+
+          // Ruta de destino en el sistema de archivos
           const publicFolderPath = path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "..",
             "public",
             "uploads",
             "ValorAgregadoPDF"
           );
+
           const publicFilePath = path.join(publicFolderPath, pdfName);
 
           try {
+            // Verificar si el archivo de origen existe
+            if (!fs.existsSync(fullPdfPath)) {
+              console.error("El archivo de origen no existe:", fullPdfPath);
+              ctx.throw(400, "El archivo de origen no existe.");
+              return;
+            }
+
             // Crear la carpeta pública si no existe
             if (!fs.existsSync(publicFolderPath)) {
               fs.mkdirSync(publicFolderPath, { recursive: true });
             }
 
             // Copiar el archivo PDF de la carpeta privada a la carpeta pública
-            fs.copyFileSync(pdfPath, publicFilePath);
-
+            fs.copyFileSync(fullPdfPath, publicFilePath);
+            // console.log(publicFilePath); return false;
             // Actualizar el campo PDF con la nueva ubicación en la base de datos de Strapi
-            ctx.request.body.data.ValorAgregadoPDF = publicFilePath;
+            ctx.request.body.data.ValorAgregadoPDF = publicFilePath.replace(
+              /\\/g,
+              "/"
+            ); // Normalizar el separador de directorios en la ruta final;
+            // console.log(ctx.request.body.data.ValorAgregadoPDF); return false;
           } catch (error) {
             console.error("Error al copiar el archivo PDF:", error);
           }
         } else {
+          ctx.request.body.data.valor_agregado = null;
+          ctx.request.body.data.ValorAgregadoPDF = null;
           console.error("El campo valor_agregado o PDF no está definido.");
         }
       } else {
