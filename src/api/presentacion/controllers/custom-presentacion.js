@@ -323,11 +323,11 @@ module.exports = createCoreController(
             // Copiar el archivo PDF de la carpeta privada a la carpeta pública
             fs.copyFileSync(fullPdfPath, publicFilePath);
             // console.log(publicFilePath); return false;
+            const protocol = ctx.request.protocol;
+            const host = ctx.request.header.host;
+            const ruta = path.join('uploads', 'ValorAgregadoPDF', pdfName).replace(/\\/g, '/'); // Normalizar el separador de directorios en la ruta final
             // Actualizar el campo PDF con la nueva ubicación en la base de datos de Strapi
-            ctx.request.body.data.ValorAgregadoPDF = publicFilePath.replace(
-              /\\/g,
-              "/"
-            ); // Normalizar el separador de directorios en la ruta final;
+            ctx.request.body.data.ValorAgregadoPDF = `${protocol}://${host}/${ruta}`;
             // console.log(ctx.request.body.data.ValorAgregadoPDF); return false;
           } catch (error) {
             console.error("Error al copiar el archivo PDF:", error);
