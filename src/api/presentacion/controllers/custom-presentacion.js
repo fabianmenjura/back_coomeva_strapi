@@ -4,11 +4,32 @@ const { createCoreController } = require("@strapi/strapi").factories;
 const _ = require("lodash");
 const path = require("path");
 const fs = require("fs");
+const FormData = require("form-data");
 
 module.exports = createCoreController(
   "api::presentacion.presentacion",
   ({ strapi }) => ({
-    //METODO GET, LISTAR PRESENTACIONES
+/*============================================================================
+                      LISTAR TODAS PRESENTACONES
+==============================================================================*/
+    /**
+     * @descripcion Obtiene las presentaciones del usuario autenticado,
+     * poblando los servicios asociados, sus banners y la empresa asociada con su imagen.
+     * @proyecto Portafolio Coomeva
+     * @autor
+     */
+    /**
+     * Buscar presentaciones del usuario autenticado.
+     *
+     * @async
+     * @función findUserPresentations
+     * @param {Object} ctx - El objeto de contexto que contiene la solicitud y la respuesta.
+     * @param {Object} ctx.state - El estado del contexto.
+     * @param {Object} ctx.state.user - El usuario autenticado.
+     * @returns {Promise<Object>} Las presentaciones del usuario autenticado, incluyendo sus servicios asociados, banners, empresa asociada e imagen.
+     * @throws {Error} Si el usuario no está autenticado o si hay un error durante el proceso de búsqueda.
+     */
+
     async findUserPresentations(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
 
@@ -91,6 +112,25 @@ module.exports = createCoreController(
 
       return this.transformResponse(transformedResponse);
     },
+
+/*============================================================================
+                      CONTAR UNA PRESENTACÓN
+==============================================================================*/
+    /**
+     * @description Obtiene una presentación específica por ID, asegurándose de
+     * que pertenezca al usuario autenticado, y estructura la respuesta
+     * agrupando los servicios por motivador.
+     *
+     * @async
+     * @function findOnePresentation
+     * @param {object} ctx - Contexto de la solicitud proporcionado por Strapi.
+     * @param {object} ctx.state.user - Usuario autenticado.
+     * @param {object} ctx.params.id - ID de la presentación a buscar.
+     * @returns {object} - Respuesta transformada con la presentación específica.
+     *
+     * @throws {UnauthorizedError} - Si el usuario no está autenticado.
+     * @throws {NotFoundError} - Si la presentación no se encuentra o no pertenece al usuario autenticado.
+     */
 
     async findOnePresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
@@ -229,6 +269,25 @@ module.exports = createCoreController(
       return this.transformResponse(transformedResponse);
     },
 
+/*============================================================================
+                      ACTUALIZAR PRESENTACÓN
+==============================================================================*/
+    /**
+     * @description Actualiza una presentación específica del usuario autenticado.
+     * Si el estado de la presentación es "Enviado", genera un PDF,
+     * mueve archivos PDF según el valor agregado, y envía datos al API de TopLeads.
+     *
+     * @async
+     * @function updateUserPresentation
+     * @param {object} ctx - Contexto de la solicitud proporcionado por Strapi.
+     * @param {object} ctx.state.user - Usuario autenticado.
+     * @param {object} ctx.params.id - ID de la presentación a actualizar.
+     * @param {object} ctx.request.body.data - Datos para actualizar la presentación.
+     * @returns {object} - Respuesta de la presentación actualizada.
+     *
+     * @throws {UnauthorizedError} - Si el usuario no está autenticado o no es el autor de la presentación.
+     * @throws {NotFoundError} - Si la presentación no se encuentra o no pertenece al usuario autenticado.
+     */
     async updateUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
 
@@ -343,16 +402,16 @@ module.exports = createCoreController(
         }
         const response = await super.update(ctx);
 
-        /*=================================================
-ENVIAR DATOS A TOPLEADS
-===================================================*/
-try {
-        // Consultar información del usuario desde la colección de usuarios de Strapi
-        const userD = await strapi.db
-          .query("plugin::users-permissions.user")
-          .findOne({
-            where: { id: user.id },
-          });
+/*============================================================================
+                      ENVIAR DATOS A TOPLEADS
+==============================================================================*/
+        try {
+          // Consultar información del usuario desde la colección de usuarios de Strapi
+          const userD = await strapi.db
+            .query("plugin::users-permissions.user")
+            .findOne({
+              where: { id: user.id },
+            });
 
           // Preparar los datos que se enviarán a TopLeads
           var formData = new FormData();
@@ -375,23 +434,26 @@ try {
           formData.append("telefonoAsesor", userD.Telefono);
           formData.append("emailAsesor", userD.email);
 
-          // console.log(sendData); return false;
+          // console.log(formData); return false;
           // Enviar los datos a la API de TopLeads utilizando axios
-        await axios.post(
+          await axios.post(
             "https://api.topleads.co/api/portafolio-coomeva/crear-contacto",
             formData,
             {
               headers: {
-                "Content-Type": "application/json",
+                ...formData.getHeaders(),
               },
             }
           );
-          // console.log(postResponse.data);
+          // console.log(postResponse);
           // return false;
         } catch (error) {
           // Manejo de errores
           console.error("Error al enviar datos a TopLeads:", error);
         }
+/*============================================================================
+                      FIN ENVÍO DATOS A TOPLEADS
+==============================================================================*/
       } else {
         // Verificar si se proporciona valor_agregado y extraer el campo PDF
         if (ctx.request.body.data.valor_agregado) {
@@ -435,8 +497,22 @@ try {
       }
       return response;
     },
-    //=========================
-    //ELIMINAR
+
+/*============================================================================
+                      ELIMINAR PRESENTACÓN
+==============================================================================*/
+    /**
+     * @description Elimina una presentación específica del usuario autenticado.
+     *
+     * @async
+     * @function deleteUserPresentation
+     * @param {object} ctx - Contexto de la solicitud proporcionado por Strapi.
+     * @param {object} ctx.state.user - Usuario autenticado.
+     * @param {object} ctx.params.id - ID de la presentación a eliminar.
+     * @returns {object} - Respuesta de la presentación eliminada.
+     *
+     * @throws {UnauthorizedError} - Si el usuario no está autenticado o no es el autor de la presentación.
+     */
     async deleteUserPresentation(ctx) {
       const user = ctx.state.user; // Obtener el usuario autenticado
 
@@ -463,21 +539,40 @@ try {
       return response;
     },
 
-    //Crear presentaciones
-    async createUserPresentation(ctx) {
-      const user = ctx.state.user; // Obtener el usuario autenticado
+/*============================================================================
+                      CREAR PRESENTACÓN
+==============================================================================*/
+    /**
+     * @archivo Controlador Personalizado para crear Presentaciones
+     * @descripcion Este archivo contiene los métodos del controlador personalizado para manejar operaciones relacionadas con presentaciones en el proyecto Portafolio Coomeva.
+     * @proyecto Portafolio Coomeva
+     * @autor GitHub: 53685320+fabianmenjura@users.noreply.github.com
+     */
 
-      // const server = "http://localhost:1337"; //editar en produccion
-      // const downloadPDFUrl = server + pdfResponse.data.url;
+    /**
+     * Crear una nueva presentación.
+     *
+     * @async
+     * @función createUserPresentation
+     * @param {Object} ctx - El objeto de contexto de Koa que contiene la solicitud y la respuesta.
+     * @param {Object} ctx.state.user - El usuario autenticado.
+     * @param {Object} ctx.request.body.data - Los datos para crear la presentación.
+     * @param {string} ctx.request.body.data.id_own_user - El ID del usuario propietario de la presentación.
+     * @param {string} [ctx.request.body.data.valor_agregado] - El ID de la entrada asociada de valor_agregado.
+     * @param {string} [ctx.request.body.data.ValorAgregadoPDF] - La URL del PDF de la entrada asociada de valor_agregado.
+     * @returns {Promise<Object>} La presentación creada.
+     * @throws {Error} Si el usuario no está autenticado o si hay un error durante el proceso de creación.
+     */
+
+    async createUserPresentation(ctx) {
+      // Obtener el usuario autenticado
+      const user = ctx.state.user;
 
       if (!user) {
         return ctx.unauthorized("Usuario no autenticado");
       }
       // Añadir el usuario autenticado como dueño de la presentación
       ctx.request.body.data.id_own_user = user.id;
-
-      //Crear pdf y añadir a la presentación
-      // ctx.request.body.data.DownloadPDF = downloadPDFUrl;
 
       // Verificar si se proporciona valor_agregado y extraer el campo PDF
       if (ctx.request.body.data.valor_agregado) {
