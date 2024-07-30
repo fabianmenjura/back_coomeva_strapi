@@ -9,7 +9,7 @@ const FormData = require("form-data");
 module.exports = createCoreController(
   "api::presentacion.presentacion",
   ({ strapi }) => ({
-/*============================================================================
+    /*============================================================================
                       LISTAR TODAS PRESENTACONES
 ==============================================================================*/
     /**
@@ -113,7 +113,7 @@ module.exports = createCoreController(
       return this.transformResponse(transformedResponse);
     },
 
-/*============================================================================
+    /*============================================================================
                       CONTAR UNA PRESENTACÓN
 ==============================================================================*/
     /**
@@ -269,7 +269,7 @@ module.exports = createCoreController(
       return this.transformResponse(transformedResponse);
     },
 
-/*============================================================================
+    /*============================================================================
                       ACTUALIZAR PRESENTACÓN
 ==============================================================================*/
     /**
@@ -402,7 +402,7 @@ module.exports = createCoreController(
         }
         const response = await super.update(ctx);
 
-/*============================================================================
+        /*============================================================================
                       ENVIAR DATOS A TOPLEADS
 ==============================================================================*/
         try {
@@ -422,6 +422,7 @@ module.exports = createCoreController(
           formData.append("celular", response.data.attributes.Celular);
           formData.append("correo", response.data.attributes.Correo);
           formData.append("nombreResponsable", response.data.attributes.Nombre_Responsable);
+          formData.append("apellidoResponsable", response.data.attributes.Apellido_Responsable);
           formData.append("downloadPDF", response.data.attributes.DownloadPDF);
           formData.append("estado", response.data.attributes.Estado);
           formData.append("valorAgregadoPDF", response.data.attributes.ValorAgregadoPDF);
@@ -434,9 +435,10 @@ module.exports = createCoreController(
           formData.append("telefonoAsesor", userD.Telefono);
           formData.append("emailAsesor", userD.email);
 
-          // console.log(formData); return false;
+          console.log("Datos enviados a TopLeads ", formData);
+          //return false;
           // Enviar los datos a la API de TopLeads utilizando axios
-          await axios.post(
+          const postResponse = await axios.post(
             "https://api.topleads.co/api/portafolio-coomeva/crear-contacto",
             formData,
             {
@@ -445,13 +447,13 @@ module.exports = createCoreController(
               },
             }
           );
-          // console.log(postResponse);
+          console.log("Respuesta TopLeads" , postResponse.data);
           // return false;
         } catch (error) {
           // Manejo de errores
           console.error("Error al enviar datos a TopLeads:", error);
         }
-/*============================================================================
+        /*============================================================================
                       FIN ENVÍO DATOS A TOPLEADS
 ==============================================================================*/
       } else {
@@ -498,7 +500,7 @@ module.exports = createCoreController(
       return response;
     },
 
-/*============================================================================
+    /*============================================================================
                       ELIMINAR PRESENTACÓN
 ==============================================================================*/
     /**
@@ -539,7 +541,7 @@ module.exports = createCoreController(
       return response;
     },
 
-/*============================================================================
+    /*============================================================================
                       CREAR PRESENTACÓN
 ==============================================================================*/
     /**

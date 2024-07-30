@@ -59,6 +59,9 @@
     "Nombre_Empresa": {
       "type": "string",
       "required": true
+    },
+    "Apellido_Responsable": {
+      "type": "string"
     }
   }
 }
