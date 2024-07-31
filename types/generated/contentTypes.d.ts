@@ -936,7 +936,6 @@ export interface ApiPresentacionPresentacion extends Schema.CollectionType {
     >;
     ValorAgregadoPDF: Attribute.String;
     Nombre_Empresa: Attribute.String & Attribute.Required;
-    Apellido_Responsable: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

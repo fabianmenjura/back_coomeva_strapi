@@ -412,6 +412,11 @@ module.exports = createCoreController(
             .findOne({
               where: { id: user.id },
             });
+          const valorAgregadoPDF = response.data.attributes.ValorAgregadoPDF ? response.data.attributes.ValorAgregadoPDF : 0;
+          const fullName = response.data.attributes.Nombre_Responsable;
+          const partsName = fullName.split(' ');
+          const firstName = partsName[0];
+          const lastName = partsName.slice(1).join(' ');
 
           // Preparar los datos que se enviarán a TopLeads
           var formData = new FormData();
@@ -421,11 +426,11 @@ module.exports = createCoreController(
           formData.append("cargo", response.data.attributes.Cargo);
           formData.append("celular", response.data.attributes.Celular);
           formData.append("correo", response.data.attributes.Correo);
-          formData.append("nombreResponsable", response.data.attributes.Nombre_Responsable);
-          formData.append("apellidoResponsable", response.data.attributes.Apellido_Responsable);
+          formData.append("firstName", firstName);
+          formData.append("lastName", lastName);
           formData.append("downloadPDF", response.data.attributes.DownloadPDF);
           formData.append("estado", response.data.attributes.Estado);
-          formData.append("valorAgregadoPDF", response.data.attributes.ValorAgregadoPDF);
+          formData.append("valorAgregadoPDF", valorAgregadoPDF);
           formData.append("nombreEmpresa", response.data.attributes.Nombre_Empresa);
           //Asesor
           formData.append("idAsesor", userD.id);
