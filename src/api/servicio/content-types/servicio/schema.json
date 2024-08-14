@@ -21,7 +21,8 @@
       "type": "text"
     },
     "Bullets1": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "Banner": {
       "type": "media",

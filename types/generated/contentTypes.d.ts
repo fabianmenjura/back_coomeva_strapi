@@ -971,7 +971,7 @@ export interface ApiServicioServicio extends Schema.CollectionType {
         minLength: 3;
       }>;
     Descripcion_Corta: Attribute.Text;
-    Bullets1: Attribute.String;
+    Bullets1: Attribute.String & Attribute.Required;
     Banner: Attribute.Media;
     Slug: Attribute.UID<'api::servicio.servicio', 'Titulo'>;
     PublicoObjetivo: Attribute.Component<'a.publico'>;
